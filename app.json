@@ -20,14 +20,6 @@
         "NSMicrophoneUsageDescription": "BottleUp needs access to your microphone for video messages and support."
       }
     },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "com.bottleup.app"
-    },
     "web": {
       "bundler": "metro",
       "favicon": "./assets/images/favicon.png"
