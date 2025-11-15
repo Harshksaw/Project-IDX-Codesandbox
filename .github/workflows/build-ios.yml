@@ -19,8 +19,20 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Clear npm cache
-        run: npm cache clean --force
+      - name: Cache Node.js dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Clear npm and yarn caches
+        run: |
+          npm cache clean --force
+          yarn cache clean
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps
@@ -35,8 +47,10 @@ jobs:
       - name: Disable Sentry CLI in CI
         run: echo "SENTRY_DISABLE_AUTO_UPLOAD=true" >> $GITHUB_ENV
 
-      - name: Clear Metro cache
-        run: rm -rf ~/Library/Caches/expo || true
+      - name: Clear Metro and Expo caches
+        run: |
+          rm -rf ~/Library/Caches/expo
+          rm -rf ~/.expo
 
       - name: Increment Build Number
         run: |
