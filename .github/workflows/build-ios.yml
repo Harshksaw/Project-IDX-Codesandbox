@@ -19,23 +19,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Cache Node.js dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Clear npm and yarn caches
-        run: |
-          npm cache clean --force
-          yarn cache clean
-
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: npm install
 
       - name: Setup Expo
         uses: expo/expo-github-action@v8
@@ -44,36 +29,12 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Disable Sentry CLI in CI
-        run: echo "SENTRY_DISABLE_AUTO_UPLOAD=true" >> $GITHUB_ENV
-
-      - name: Clear Metro and Expo caches
-        run: |
-          rm -rf ~/Library/Caches/expo
-          rm -rf ~/.expo
-
-      - name: Increment Build Number
-        run: |
-          CURRENT=$(cat app.json | jq -r '.expo.ios.buildNumber')
-          NEW=$((CURRENT + 1))
-          sed -i.bak "s/\"buildNumber\": \"$CURRENT\"/\"buildNumber\": \"$NEW\"/" app.json
-          echo "Build number incremented: $CURRENT → $NEW"
-          cat app.json | jq -r '.expo.ios.buildNumber'
-
-      - name: Build IPA with EAS (Local)
+      - name: Build IPA with EAS (local)
         run: eas build --local --platform ios --non-interactive --profile production
-
-      - name: Commit Updated Build Number
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add app.json
-          git commit -m "Bump iOS build number [skip ci]" || echo "No changes to commit"
-          git push || echo "Push failed, may have no changes"
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: userapp-ipa
+          name: vendorapp-ipa
           path: "*.ipa"
           retention-days: 30
