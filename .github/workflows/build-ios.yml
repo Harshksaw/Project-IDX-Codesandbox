@@ -20,12 +20,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Verify npm ci compatibility
-        run: |
-          # Check if npm ci would work (detects package-lock.json sync issues)
-          npm ci --dry-run || (echo "package-lock.json is out of sync with package.json. Run 'npm install' and commit the updated lockfile." && exit 1)
+        run: npm ci
 
       - name: Setup Expo
         uses: expo/expo-github-action@v8
@@ -35,11 +30,14 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Build IPA with EAS (local)
-        run: eas build --local --platform ios --non-interactive --profile production
+        run: eas build --local --platform ios --non-interactive --profile production --output=vendorapp.ipa
+
+      - name: List files to verify IPA
+        run: ls -l
 
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
           name: vendorapp-ipa
-          path: "*.ipa"
+          path: "vendorapp.ipa"
           retention-days: 30
