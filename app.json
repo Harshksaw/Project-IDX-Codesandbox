@@ -7,21 +7,24 @@
     "icon": "./assets/images/icon.png",
     "scheme": "newbottleup",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.NewBottleUp"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.bottleup.app",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.bottleup.app",
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "bundler": "metro",
-      "output": "standalone",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": []
