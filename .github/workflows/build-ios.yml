@@ -30,6 +30,10 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Build IPA with EAS (local)
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
         run: eas build --local --platform ios --non-interactive --profile production --output=vendorapp.ipa
 
       - name: List files to verify IPA
