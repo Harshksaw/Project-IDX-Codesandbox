@@ -8,6 +8,7 @@
     "scheme": "newbottleup",
     "userInterfaceStyle": "automatic",
     "ios": {
+        "icon": "./assets/images/ios-icon.png",
       "supportsTablet": false,
       "bundleIdentifier": "com.bottleup.app",
       "config": {
@@ -27,6 +28,15 @@
       "bundler": "metro",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": []
+    "plugins": [
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "user-app",
+          "organization": "bottleup"
+        }
+      ]
+    ]
   }
 }

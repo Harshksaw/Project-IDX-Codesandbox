@@ -12,6 +12,26 @@ import { useCallback, useEffect } from "react";
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast, { ToastConfig } from "react-native-toast-message";
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://5a30ae46d2f5d7b2d6af58ce6bb3d104@o4510352872308736.ingest.us.sentry.io/4510370638528512',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Enable Logs
+  enableLogs: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 
 // if (Platform.OS !== 'web') {
@@ -29,7 +49,7 @@ const navTheme = {
   }
 }
 
-export default function App() {
+export default Sentry.wrap(function App() {
   const signIn = useAuthStore(state => state.signIn);
   const signOut = useAuthStore(state => state.signOut);
   const [fontsLoaded] = useFonts({
@@ -86,7 +106,7 @@ export default function App() {
       </UniversalStripeProvider>
     </SafeAreaProvider>
   );
-}
+});
 
 
 const styles = StyleSheet.create({

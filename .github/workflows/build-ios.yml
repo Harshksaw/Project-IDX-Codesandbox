@@ -1,0 +1,81 @@
+name: Build iOS IPA
+
+on:
+  workflow_dispatch: 
+  push:
+    branches:
+      - buildios
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Create .env file from secrets
+        run: |
+          cat > .env.local << EOF
+          SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+          PROD_URL=${{ secrets.PROD_URL }}
+          SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+          EXPO_PUBLIC_SENTRY_DSN=${{ secrets.EXPO_PUBLIC_SENTRY_DSN }}
+          EOF
+
+      - name: Verify environment variables are set
+        run: |
+          echo "Checking required environment variables..."
+          [ -n "${{ secrets.EXPO_TOKEN }}" ] && echo "✓ EXPO_TOKEN configured" || echo "✗ EXPO_TOKEN missing"
+          [ -n "${{ secrets.SUPABASE_URL }}" ] && echo "✓ SUPABASE_URL configured" || echo "✗ SUPABASE_URL missing"
+          [ -n "${{ secrets.SUPABASE_ANON_KEY }}" ] && echo "✓ SUPABASE_ANON_KEY configured" || echo "✗ SUPABASE_ANON_KEY missing"
+          [ -n "${{ secrets.SENTRY_AUTH_TOKEN }}" ] && echo "✓ SENTRY_AUTH_TOKEN configured" || echo "✗ SENTRY_AUTH_TOKEN missing"
+          [ -n "${{ secrets.EXPO_PUBLIC_SENTRY_DSN }}" ] && echo "✓ EXPO_PUBLIC_SENTRY_DSN configured" || echo "✗ EXPO_PUBLIC_SENTRY_DSN missing"
+
+      - name: Build IPA with EAS
+        run: eas build --local --platform ios --non-interactive --profile production
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          EXPO_PUBLIC_SENTRY_DSN: ${{ secrets.EXPO_PUBLIC_SENTRY_DSN }}
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: newbottleup-ipa
+          path: "*.ipa"
+          retention-days: 30
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: ~/.eas/logs
+          retention-days: 7
+
+      - name: Notify on Success
+        if: success()
+        run: echo "✅ iOS IPA built successfully!"
+
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "❌ iOS build failed!"
+          echo "Check the build logs artifact for details"
