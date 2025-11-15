@@ -20,7 +20,12 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
+
+      - name: Verify npm ci compatibility
+        run: |
+          # Check if npm ci would work (detects package-lock.json sync issues)
+          npm ci --dry-run || (echo "package-lock.json is out of sync with package.json. Run 'npm install' and commit the updated lockfile." && exit 1)
 
       - name: Setup Expo
         uses: expo/expo-github-action@v8
