@@ -9,7 +9,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bottleup.app",
-      "buildNumber": "4",
+      "buildNumber": "14",
       "infoPlist": {
         "NSCameraUsageDescription": "BottleUp needs access to your camera to take photos of receipts and orders.",
         "NSPhotoLibraryUsageDescription": "BottleUp needs access to your photo library to select images for orders and receipts.",
