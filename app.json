@@ -8,11 +8,18 @@
     "scheme": "newbottleup",
     "userInterfaceStyle": "automatic",
     "ios": {
-        "icon": "./assets/images/ios-icon.png",
+      "icon": "./assets/images/ios-icon.png",
       "supportsTablet": false,
+      "buildNumber": "7",
       "bundleIdentifier": "com.bottleup.app",
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "BottleUp needs access to your camera to take photos of receipts and orders.",
+        "NSPhotoLibraryUsageDescription": "BottleUp needs access to your photo library to select images for orders and receipts.",
+        "NSPhotoLibraryAddUsageDescription": "BottleUp needs permission to save order confirmations and receipts to your photo library.",
+        "NSMicrophoneUsageDescription": "BottleUp needs access to your microphone for video messages and support."
       }
     },
     "android": {
@@ -21,8 +28,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.bottleup.app",
-      "softwareKeyboardLayoutMode": "pan"
+      "package": "com.bottleup.app"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +43,12 @@
           "organization": "bottleup"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a881e8be-7143-443b-9b21-ea4bbf520c9e"
+      }
+    },
+    "owner": "bottleupteam"
   }
 }
