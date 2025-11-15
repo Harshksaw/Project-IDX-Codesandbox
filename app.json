@@ -4,10 +4,7 @@
     "name": "NewBottleUp",
     "slug": "NewBottleUp",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
     "scheme": "newbottleup",
-    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
