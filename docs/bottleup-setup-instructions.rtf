@@ -1,0 +1,140 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 # BottleUp App \'96 Supabase & Stripe Integration Guide\
+\
+## Overview\
+\
+This guide describes how to integrate Supabase (for authentication, database, and storage) and Stripe (for payments, payouts, and Connect onboarding) in the BottleUp app. It is meant for both human developers and AI coding assistants (like Codex) as a step-by-step reference for implementation.\
+\
+---\
+\
+## 1. Supabase Integration\
+\
+### a. Installation\
+\
+- Ensure `@supabase/supabase-js` is in `package.json` (already present).\
+- Initialize the Supabase client in a shared file (e.g., `globals.ts`):\
+    ```ts\
+    import \{ createClient \} from '@supabase/supabase-js';\
+\
+    export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);\
+    ```\
+\
+### b. Authentication\
+\
+- Use Supabase Auth for user signup, login, logout, and session handling:\
+    ```ts\
+    // Signup\
+    supabase.auth.signUp(\{ email, password \});\
+    // Signin\
+    supabase.auth.signInWithPassword(\{ email, password \});\
+    // Signout\
+    supabase.auth.signOut();\
+    ```\
+- Fetch current user/session on app load.\
+- Use Supabase dashboard to set up Row Level Security (RLS) for data protection.\
+\
+### c. Database Usage\
+\
+- Use Supabase client for CRUD (venues, events, bookings, users, etc.):\
+    ```ts\
+    // Fetch venues\
+    const \{ data, error \} = await supabase.from('venues').select('*');\
+    ```\
+- Use foreign keys for table relationships.\
+- Use Supabase Storage for images and file uploads.\
+\
+### d. Edge Functions\
+\
+- For sensitive logic (admin, payments, Stripe), use Supabase Edge Functions:\
+    - Deploy with `supabase functions deploy`.\
+    - Call via REST endpoint from your app.\
+\
+---\
+\
+## 2. Stripe Integration\
+\
+### a. Installation\
+\
+- Use `@stripe/stripe-react-native` for mobile payments.\
+- Use `@stripe/stripe-js` and `@stripe/react-stripe-js` for web.\
+\
+### b. Payment Flow\
+\
+- On backend, create a PaymentIntent with Stripe, return `client_secret` to app.\
+- In-app, use Stripe\'92s PaymentSheet or CardField to accept payment:\
+    ```ts\
+    // Confirm payment\
+    const \{ error, paymentIntent \} = await confirmPayment(clientSecret, \{ ... \});\
+    ```\
+- On success, update booking/payment status in Supabase.\
+\
+### c. Stripe Connect (Vendor Payouts)\
+\
+- Use Stripe Connect onboarding for vendors/venues.\
+    - Backend: Create account link with Stripe, send onboarding link to frontend.\
+    - Store returned `account_id` in Supabase for vendor.\
+    - Use Connect to manage payouts and collect fees.\
+\
+### d. Handling Fees, Payouts, Refunds\
+\
+- Calculate platform/Stripe fees on backend.\
+- Use backend API to trigger Stripe payouts and refunds (never from frontend).\
+- Update Supabase records after payout/refund completes.\
+\
+### e. Security\
+\
+- Never expose Stripe secret keys in frontend.\
+- Use environment variables and backend logic for all secrets.\
+- Only expose public keys to frontend for PaymentSheet setup.\
+\
+---\
+\
+## 3. Implementation Instructions\
+\
+**For Codex or Developers:**\
+1. Implement each screen/component as per `MASTER_FLOW.md`.\
+2. For data operations, use Supabase client or Edge Functions as required.\
+3. For all payment/payout/refund flows, use backend endpoints to interface with Stripe.\
+4. Use role-based logic for admin/vendor/user screens.\
+5. Implement Stripe Connect onboarding for vendors.\
+6. Add error handling, loading states, and notifications everywhere.\
+7. Type all APIs, screens, and services with TypeScript.\
+8. Follow secure coding practices: never store or expose secrets in frontend code.\
+\
+**References:**\
+- [Supabase JS Docs](https://supabase.com/docs/reference/javascript)\
+- [Supabase Auth](https://supabase.com/docs/guides/auth)\
+- [Stripe React Native Docs](https://stripe.com/docs/payments/accept-a-payment?platform=react-native)\
+- [Stripe Connect](https://stripe.com/docs/connect)\
+- [Supabase Edge Functions](https://supabase.com/docs/guides/functions)\
+\
+---\
+\
+## 4. Example Service Layer (Recommended Pattern)\
+\
+```ts\
+// services/userService.ts\
+import \{ supabase \} from '@/globals';\
+\
+export const getCurrentUser = async () => \{\
+  const \{ data, error \} = await supabase.auth.getUser();\
+  if (error) throw error;\
+  return data.user;\
+\};\
+\
+// services/paymentService.ts\
+export const createPaymentIntent = async (amount, currency) => \{\
+  // Call your backend function, which creates the Stripe PaymentIntent\
+  const res = await fetch('/api/create-payment-intent', \{\
+    method: 'POST',\
+    body: JSON.stringify(\{ amount, currency \}),\
+  \});\
+  return res.json();\
+\};\
+}
