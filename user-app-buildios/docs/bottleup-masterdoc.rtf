@@ -1,0 +1,208 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 # BottleUp App \'96 Master Flow & Screen Documentation\
+\
+## Table of Contents\
+- User Core Booking Flow\
+- Event Setup & Options\
+- Booking History, Status, and Receipts\
+- Check-In Flow\
+- Admin, Venue, Vendor & Dashboard Flows\
+- Account, Profile & Support\
+- Authentication & Onboarding\
+- Payments, Fees, Taxes & Policies\
+- Chat & Messaging\
+\
+---\
+\
+## User Core Booking Flow\
+\
+- SplashScreen (`SplashScreen.tsx`)\
+- Where to (`WhereToScreen.tsx`)\
+- Venues Page (`VenuesPageScreen.tsx`)\
+- Venue Page Details (`VenuePageDetailsScreen.tsx`)\
+- Event Page Details (`EventPageDetailsScreen.tsx`)\
+- Event Individual Service Select (`EventServiceSelectScreen.tsx`)\
+- Event Individual Seating (`EventSeatingScreen.tsx`)\
+- Event Individual Purchase Conditions (`EventPurchaseConditionsScreen.tsx`)\
+- Event Individual Review Pay At the Venue (`EventReviewPayAtVenueScreen.tsx`)\
+    - [variants: Copy2, Copy4, Copy5, Info]\
+- Event Service Select Closed/Suspended (`EventServiceSelectClosedScreen.tsx`, `EventServiceSelectSuspendedScreen.tsx`)\
+\
+---\
+\
+## Event Setup & Options\
+\
+- Event Options (`event-options/`)\
+    - Event Flyer Empty (`EventFlyerScreen.tsx`)\
+    - Event Custom Description (`EventCustomDescriptionScreen.tsx`)\
+    - Repeat Event (`RepeatEventScreen.tsx`)\
+    - Repeat Event Never (`RepeatEventNeverScreen.tsx`)\
+- Terms & Policies (`terms-and-policies/`)\
+    - Custom Description (`CustomDescriptionScreen.tsx`)\
+    - Purchase Terms Restrictions (Refunds) (`PurchaseTermsRefundsScreen.tsx`)\
+    - Purchase Terms Restrictions (Additional) (`PurchaseTermsAdditionalScreen.tsx`)\
+- Add Listing Flow (`add-listing-flow/`)\
+    - Add a Listing Expanded (`AddListingExpandedScreen.tsx`)\
+    - Add a Listing Expanded (Tax and Payout Required) (`AddListingTaxPayoutScreen.tsx`)\
+    - Add a Listing Expanded (Ticket) (`AddListingTicketScreen.tsx`)\
+    - Add a Listing Expanded (Ticket PaymentAdded) (`AddListingTicketPaymentScreen.tsx`)\
+- Vendor Onboarding (`vendor-onboarding/`)\
+    - Add admin (`AddAdminScreen.tsx`)\
+    - Pending Admin Profile (`PendingAdminProfileScreen.tsx`)\
+    - Onboarding Details (`OnboardingDetailsScreen.tsx`)\
+    - Onboarding Password (`OnboardingPasswordScreen.tsx`)\
+    - Merchant Vendor Agreement (`MerchantVendorAgreementScreen.tsx`)\
+\
+---\
+\
+## Booking History, Status, and Receipts\
+\
+- Booking Flow (`booking-flow/`)\
+    - Booking History (`BookingHistoryScreen.tsx`)\
+    - Reservation (`ReservationScreen.tsx`)\
+    - More Details (`MoreDetailsScreen.tsx`)\
+    - Order Breakdown (`OrderBreakdownScreen.tsx`)\
+    - Reservation Pending (`ReservationPendingScreen.tsx`)\
+    - Reservation QR Code (`ReservationQRCodeScreen.tsx`)\
+    - Reservation Refunded (`ReservationRefundedScreen.tsx`)\
+    - In-Person Refund (`InPersonRefundScreen.tsx`)\
+    - In-App Refund (`InAppRefundScreen.tsx`)\
+    - Purchase policy User (`PurchasePolicyUserScreen.tsx`)\
+- Booking Extras (`booking-extras/`)\
+    - Reservation Voided (`ReservationVoidedScreen.tsx`)\
+    - Reservation Completed (`ReservationCompletedScreen.tsx`)\
+    - Booking History Past (`BookingHistoryPastScreen.tsx`)\
+- Product Order Flow (`product-order-flow/`)\
+    - Order Details (`OrderDetailsScreen.tsx`)\
+    - Order Details 2 (`OrderDetails2Screen.tsx`)\
+    - Order Details (Pending Orders) (`OrderDetailsPendingScreen.tsx`)\
+    - Order Refunded (`OrderRefundedScreen.tsx`)\
+    - Order Breakdown Copy (`OrderBreakdownCopyScreen.tsx`)\
+    - Order Cancellation Notice (`OrderCancellationNoticeScreen.tsx`)\
+- Receipts (`receipts/`)\
+    - Purchase Receipt (`PurchaseReceiptScreen.tsx`)\
+    - Purchase Receipt Pending (`PurchaseReceiptPendingScreen.tsx`)\
+\
+---\
+\
+## Check-In Flow\
+\
+- Check-Ins & Payouts (`checkins/`)\
+    - CheckinInSuccessful (`CheckinSuccessfulScreen.tsx`)\
+    - CheckInAlreadyCheckedIn (`CheckinAlreadyScreen.tsx`)\
+    - CheckInInvalid (`CheckinInvalidScreen.tsx`)\
+    - Payout but not checked in (`PayoutNotCheckedInScreen.tsx`)\
+    - Payout paid for full total (`PayoutFullScreen.tsx`)\
+    - Payout but checked in (`PayoutCheckedInScreen.tsx`)\
+    - Payout but not checked in (Ticket) (`PayoutNotCheckedInTicketScreen.tsx`)\
+\
+---\
+\
+## Admin, Venue, Vendor & Dashboard Flows\
+\
+- Dashboard Status (`dashboard-status/`)\
+    - Manage Events (All events suspended) (`ManageEventsSuspendedScreen.tsx`)\
+    - Dashboard (Event Paused) (`DashboardPausedScreen.tsx`)\
+- Admin Toggles (`admin-toggles/`)\
+    - Main Admin Notification (Toggle) (`AdminNotificationToggleScreen.tsx`)\
+    - Manage Events (Toggle) (`ManageEventsToggleScreen.tsx`)\
+- Admin Notifications (`admin-notifications/`)\
+    - Main Admin Notification (`AdminNotificationScreen.tsx`)\
+    - Main Admin Notification Pending (`AdminNotificationPendingScreen.tsx`)\
+- Master Vendor Flow (`master-vendor-flow/`)\
+    - SignIn (`VendorSignInScreen.tsx`)\
+    - Manage Events (`VendorManageEventsScreen.tsx`)\
+    - Dashboard (`VendorDashboardScreen.tsx`)\
+    - Inventory (`InventoryScreen.tsx`)\
+    - Orders (`OrdersScreen.tsx`)\
+    - Checkin (`VendorCheckinScreen.tsx`)\
+    - Earnings (`VendorEarningsScreen.tsx`)\
+    - More options (Event Dashboard) (`VendorMoreOptionsScreen.tsx`)\
+    - Edit Event (`EventEditScreen.tsx`)\
+    - Refunds (`VendorRefundsScreen.tsx`)\
+    - Inventory Table or Ticket (`InventoryTableScreen.tsx`)\
+    - Templates (Add Event Listing) (`EventTemplatesScreen.tsx`)\
+- Master Mode View Flow (`master-mode-view-flow/`)\
+    - SignIn (`MasterSignInScreen.tsx`)\
+    - Master Dashboard (`MasterDashboardScreen.tsx`)\
+    - Sponsor (`SponsorScreen.tsx`)\
+    - Venue Dashboard (`VenueDashboardScreen.tsx`)\
+    - Profile (`MasterProfileScreen.tsx`)\
+    - Change Password (`ChangePasswordScreen.tsx`)\
+    - Terms and Conditions Empty (`TermsAndConditionsScreen.tsx`)\
+    - CityAdmin (`CityAdminScreen.tsx`)\
+    - AddCityAdmin (`AddCityAdminScreen.tsx`)\
+    - City Dashboard (`CityDashboardScreen.tsx`)\
+    - AddedCityAdmin (`AddedCityAdminScreen.tsx`)\
+    - VenueAdmin (`VenueAdminScreen.tsx`)\
+    - Add New Venue (`AddNewVenueScreen.tsx`)\
+    - Venue Dashboard Copy (`VenueDashboardCopyScreen.tsx`)\
+    - Venue Admin Profiles (`VenueAdminProfilesScreen.tsx`)\
+    - Fee breakdown (`FeeBreakdownScreen.tsx`)\
+    - Update Venue (`UpdateVenueScreen.tsx`)\
+    - Update Existing Admin Profile (`UpdateAdminProfileScreen.tsx`)\
+\
+---\
+\
+## Account, Profile & Support\
+\
+- Account Management (`account-management/`)\
+    - Account (`AccountScreen.tsx`)\
+    - Account Settings (`AccountSettingsScreen.tsx`)\
+    - EditProfile (`EditProfileScreen.tsx`)\
+    - PaymentMethod (`PaymentMethodScreen.tsx`)\
+    - AddCard (`AddCardScreen.tsx`)\
+- Support & Help (`support/`)\
+    - Help Center (`HelpCenterScreen.tsx`)\
+    - Legal (`LegalScreen.tsx`)\
+    - Finance (`FinanceScreen.tsx`)\
+- Accounts and Passwords (`accounts-and-passwords/`)\
+    - The Vault (`VaultScreen.tsx`)\
+    - Accounts and Passwords (`AccountsPasswordsScreen.tsx`)\
+    - VenueProfile (`VenueProfileScreen.tsx`)\
+    - MyProfile (`MyProfileScreen.tsx`)\
+    - Change Password 2 (`ChangePassword2Screen.tsx`)\
+\
+---\
+\
+## Authentication & Onboarding\
+\
+- Auth Onboarding (`auth-onboarding/`)\
+    - Event Individual ID Validation NO SIGNIN (`IDValidationNoSigninScreen.tsx`)\
+    - CreateProfile (`CreateProfileScreen.tsx`)\
+    - CreateProfile Enter Code (`CreateProfileEnterCodeScreen.tsx`)\
+    - CreateProfile Name Last Email (`CreateProfileNameLastEmailScreen.tsx`)\
+    - CreateProfile Copy (`CreateProfileCopyScreen.tsx`)\
+    - SignIn (`SignInScreen.tsx`)\
+\
+---\
+\
+## Payments, Fees, Taxes & Policies\
+\
+- Taxes & Fees (`taxes-and-fees/`)\
+    - Sales Tax (On the app) (`SalesTaxAppScreen.tsx`)\
+    - Sales Tax (In person) (`SalesTaxInPersonScreen.tsx`)\
+    - Reservation Fee (In person) (`ReservationFeeScreen.tsx`)\
+    - Tax Percentage Recommendations (`TaxPercentageScreen.tsx`)\
+    - Payouts Step 1 (`PayoutStep1Screen.tsx`)\
+    - Payouts Step 2 (`PayoutStep2Screen.tsx`)\
+    - Gratuity (In person) (`GratuityInPersonScreen.tsx`)\
+\
+---\
+\
+## Chat & Messaging\
+\
+- Messaging (`messaging/`)\
+    - Customer Inbox (`CustomerInboxScreen.tsx`)\
+    - Customer Inbox Details (`InboxDetailsScreen.tsx`)\
+- Booking History Empty (`BookingHistoryEmptyScreen.tsx`)\
+\
+---\
+\
+}
