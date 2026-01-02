@@ -1,21 +1,20 @@
 import './EditorButton.css';
 
-export const EditorButton = ({ isActive }) => {
+export const EditorButton = ({ isActive, fileName = 'file.js', onClick }) => {
 
     function handleClick() {
+        if (onClick) {
+            onClick();
+        }
         // TODO: Implement click handler
     }
+
     return (
         <button
-            className="editor-button"
-            style={{
-                color: isActive ? 'white' : '#959eba',
-                backgroundColor: isActive ? '#303242' : '#4a4859',
-                borderTop: isActive ? '2px solid #f7b9dd' : 'none',
-            }}
+            className={`editor-button transition-smooth ${isActive ? 'active' : ''}`}
             onClick={handleClick}
         >
-            file.js
+            {fileName}
         </button>
     )
 }

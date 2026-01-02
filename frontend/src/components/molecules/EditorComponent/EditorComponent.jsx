@@ -49,24 +49,38 @@ export const EditorComponent = () => {
     }, []);
 
     return (
-        <>
-            {   editorState.theme &&
-                <Editor 
-                    
-                    width={'100%'}
+        <div
+            className="transition-smooth"
+            style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'var(--color-editor-bg)',
+                borderRadius: 'var(--radius-sm)',
+                overflow: 'hidden',
+                position: 'relative',
+            }}
+        >
+            {editorState.theme && (
+                <Editor
+                    width="100%"
+                    height="100%"
                     defaultLanguage={undefined}
-                    defaultValue='// Welcome to the playground'
+                    defaultValue="// Welcome to the playground"
                     options={{
                         fontSize: 18,
-                        fontFamily: 'monospace'
+                        fontFamily: 'monospace',
+                        padding: { top: 16, bottom: 16 },
+                        scrollBeyondLastLine: false,
+                        minimap: { enabled: true },
+                        smoothScrolling: true,
+                        cursorSmoothCaretAnimation: 'on',
                     }}
                     language={extensionToFileType(activeFileTab?.extension)}
                     onChange={handleChange}
                     value={activeFileTab?.value ? activeFileTab.value : '// Welcome to the playground'}
-
                     onMount={handleEditorTheme}
                 />
-            }
-        </>
+            )}
+        </div>
     )
 }

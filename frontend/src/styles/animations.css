@@ -1,0 +1,207 @@
+/* Animation Utilities */
+/* Reusable animation classes and keyframes */
+
+/* Keyframe Definitions */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Animation Utility Classes */
+
+.animate-fade-in {
+  animation: fadeIn var(--duration-normal) var(--timing-function) forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--duration-normal) var(--timing-function) forwards;
+}
+
+.animate-slide-in {
+  animation: slideIn var(--duration-normal) var(--timing-function) forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--duration-normal) var(--timing-function) forwards;
+}
+
+.animate-pulse {
+  animation: pulse 2s var(--timing-function) infinite;
+}
+
+.animate-glow {
+  animation: glow 2s var(--timing-function) infinite;
+}
+
+.animate-rotate {
+  animation: rotate 1s linear infinite;
+}
+
+/* Transition Utility Classes */
+
+.transition-smooth {
+  transition: all var(--duration-normal) var(--timing-function);
+}
+
+.transition-fast {
+  transition: all var(--duration-fast) var(--timing-function);
+}
+
+.transition-slow {
+  transition: all var(--duration-slow) var(--timing-function);
+}
+
+.transition-colors {
+  transition: color var(--duration-normal) var(--timing-function),
+              background-color var(--duration-normal) var(--timing-function),
+              border-color var(--duration-normal) var(--timing-function);
+}
+
+.transition-transform {
+  transition: transform var(--duration-normal) var(--timing-function);
+}
+
+/* Hover Effect Utility Classes */
+
+.hover-lift {
+  transition: all var(--duration-normal) var(--timing-function);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.hover-scale {
+  transition: transform var(--duration-normal) var(--timing-function);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-glow:hover {
+  box-shadow: var(--shadow-glow);
+}
+
+.hover-brighten {
+  transition: filter var(--duration-normal) var(--timing-function);
+}
+
+.hover-brighten:hover {
+  filter: brightness(1.1);
+}
+
+/* Interactive States */
+
+.clickable {
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--duration-fast) var(--timing-function);
+}
+
+.clickable:active {
+  transform: scale(0.98);
+}
+
+/* Stagger Animation for Lists */
+
+.stagger-animation > * {
+  opacity: 0;
+  animation: slideUp var(--duration-normal) var(--timing-function) forwards;
+}
+
+.stagger-animation > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-animation > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-animation > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-animation > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-animation > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-animation > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-animation > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-animation > *:nth-child(8) { animation-delay: 350ms; }
+.stagger-animation > *:nth-child(9) { animation-delay: 400ms; }
+.stagger-animation > *:nth-child(10) { animation-delay: 450ms; }
+
+/* Loading Animation */
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: rotate 0.8s linear infinite;
+}
+
+/* Focus Ring */
+
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-focus);
+  border-radius: var(--radius-sm);
+}

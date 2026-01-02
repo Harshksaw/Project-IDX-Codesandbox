@@ -1,12 +1,58 @@
 .editor-button {
     outline: none;
-    background-color: #303242;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(6, 182, 212, 0.05));
     font-size: 14px;
-    height: 30px;
-    border-left: none;
-    border-bottom: none;
-    border-top: 1px solid #f7b9dd;
-    color: white;
+    height: 32px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--color-text-secondary);
     min-width: 100px;
-    padding: 3px 7px 3px 7px;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--timing-function);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    font-weight: 500;
+    position: relative;
+    overflow: hidden;
+}
+
+.editor-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity var(--duration-normal) var(--timing-function);
+    z-index: -1;
+}
+
+.editor-button:hover {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(6, 182, 212, 0.1));
+    color: var(--color-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+}
+
+.editor-button.active {
+    background: var(--gradient-button-active);
+    color: var(--color-text-primary);
+    border-bottom: 2px solid var(--color-secondary);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    font-weight: 600;
+}
+
+.editor-button.active::before {
+    opacity: 0.1;
+}
+
+.editor-button:active {
+    transform: translateY(0);
+}
+
+.editor-button:focus-visible {
+    outline: 2px solid var(--color-secondary);
+    outline-offset: 2px;
 }

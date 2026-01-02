@@ -1,0 +1,107 @@
+/* TreeNode Styles with Theme */
+
+.tree-node-container {
+    padding-left: 15px;
+    color: var(--color-text-primary);
+}
+
+.tree-node-folder-button {
+    border: none;
+    cursor: pointer;
+    outline: none;
+    color: var(--color-text-primary);
+    background-color: transparent;
+    padding: 12px 15px;
+    fontSize: 16px;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+    border-radius: var(--radius-sm);
+    transition: all var(--duration-normal) var(--timing-function);
+    font-weight: 500;
+}
+
+.tree-node-folder-button:hover {
+    background-color: var(--color-hover);
+    color: var(--color-secondary);
+    transform: translateX(4px);
+}
+
+.tree-node-folder-button:active {
+    transform: translateX(2px);
+}
+
+.tree-node-icon-arrow {
+    transition: transform var(--duration-normal) var(--timing-function);
+    display: flex;
+    align-items: center;
+    color: var(--color-text-secondary);
+}
+
+.tree-node-icon-arrow.expanded {
+    color: var(--color-secondary);
+}
+
+.tree-node-file {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 12px;
+    margin-top: 4px;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--duration-normal) var(--timing-function);
+}
+
+.tree-node-file:hover {
+    background-color: rgba(124, 58, 237, 0.08);
+    transform: translateX(4px);
+}
+
+.tree-node-file:hover .tree-node-file-name {
+    color: var(--color-secondary);
+}
+
+.tree-node-file:active {
+    background-color: rgba(124, 58, 237, 0.12);
+    transform: translateX(2px);
+}
+
+.tree-node-file-icon {
+    display: flex;
+    align-items: center;
+    transition: transform var(--duration-fast) var(--timing-function);
+}
+
+.tree-node-file:hover .tree-node-file-icon {
+    transform: scale(1.1);
+}
+
+.tree-node-file-name {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin: 0;
+    margin-left: 12px;
+    font-size: 15px;
+    color: var(--color-text-primary);
+    transition: color var(--duration-normal) var(--timing-function);
+    font-weight: 400;
+}
+
+.tree-node-children {
+    animation: slideDown var(--duration-normal) var(--timing-function);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        max-height: 1000px;
+    }
+}

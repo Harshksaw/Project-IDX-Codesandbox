@@ -3,6 +3,7 @@ import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { FileIcon } from "../../atoms/FileIcon/Fileicon";
 import { useEditorSocketStore } from "../../../store/editorSocketStore";
 import { useFileContextMenuStore } from "../../../store/fileContextMenuStore";
+import './TreeNode.css';
 
 export const TreeNode = ({
     fileFolderData
@@ -53,62 +54,45 @@ export const TreeNode = ({
     }, [visibility])
 
     return (
-        ( fileFolderData && 
-        <div
-            style={{
-                paddingLeft: "15px",
-                color: "white"
-            }}
-        >
-            {fileFolderData.children /** If the current node is a folder ? */ ? (
-                /** If the current node is a folder, render it as a button */
-                <button
-                    onClick={() => toggleVisibility(fileFolderData.name)}
-                    style={{
-                        border: "none",
-                        cursor: "pointer",
-                        outline: "none",
-                        color: "white",
-                        backgroundColor: "transparent",
-                        padding: "15px",
-                        fontSize: "16px",
-                        marginTop: "10px"
-
-                    }}
-                >
-                    {visibility[fileFolderData.name] ? <IoIosArrowDown /> : <IoIosArrowForward />}
-                    {fileFolderData.name}
-                </button>
-            ) : (
-                /** If the current node is not a folder, render it as a p */
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "start", }}>
-                    <FileIcon extension={computeExtension(fileFolderData)} />
-                    <p
-                        style={{
-                            paddingTop: "15px",
-                            paddingBottom: "15px",
-                            marginTop: "8px",
-                            fontSize: "15px",
-                            cursor: "pointer",
-                            marginLeft: "18px",
-                            // color: "black"
-                        }}
+        fileFolderData && (
+            <div className="tree-node-container">
+                {fileFolderData.children ? (
+                    /** If the current node is a folder, render it as a button */
+                    <button
+                        onClick={() => toggleVisibility(fileFolderData.name)}
+                        className="tree-node-folder-button"
+                    >
+                        <span className={`tree-node-icon-arrow ${visibility[fileFolderData.name] ? 'expanded' : ''}`}>
+                            {visibility[fileFolderData.name] ? <IoIosArrowDown /> : <IoIosArrowForward />}
+                        </span>
+                        {fileFolderData.name}
+                    </button>
+                ) : (
+                    /** If the current node is a file, render it with icon */
+                    <div
+                        className="tree-node-file"
                         onContextMenu={(e) => handleContextMenuForFiles(e, fileFolderData.path)}
                         onDoubleClick={() => handleDoubleClick(fileFolderData)}
                     >
-                        {fileFolderData.name}
-                    </p>
-                </div>
-            )}
-            {visibility[fileFolderData.name] && fileFolderData.children && (
-                fileFolderData.children.map((child) => (
-                    <TreeNode 
-                        fileFolderData={child}
-                        key={child.name}
-                    />
-                ))
-            )}
-
-        </div>)
+                        <div className="tree-node-file-icon">
+                            <FileIcon extension={computeExtension(fileFolderData)} />
+                        </div>
+                        <p className="tree-node-file-name">
+                            {fileFolderData.name}
+                        </p>
+                    </div>
+                )}
+                {visibility[fileFolderData.name] && fileFolderData.children && (
+                    <div className="tree-node-children">
+                        {fileFolderData.children.map((child) => (
+                            <TreeNode
+                                fileFolderData={child}
+                                key={child.name}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
+        )
     )
 }

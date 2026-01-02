@@ -45,69 +45,86 @@ export const ProjectPlayground = () => {
     }, [setProjectId, projectIdFromUrl, setEditorSocket, setTerminalSocket]);
 
     return (
-        <>
-        <div style={{ display: "flex" }}>
-            { projectId && (
-                    <div
-                        style={{
-                            backgroundColor: "#333254",
-                            paddingRight: "10px",
-                            paddingTop: "0.3vh",
-                            minWidth: "250px",
-                            maxWidth: "25%",
-                            height: "100vh",
-                            overflow: "auto"
-                        }}
-                    >
-                        <TreeStructure />
-                    </div>
-                )}
+        <div
+            style={{
+                display: 'flex',
+                height: '100vh',
+                width: '100%',
+                background: 'var(--color-dark-bg)',
+                overflow: 'hidden',
+            }}
+        >
+            {projectId && (
+                <div
+                    className="animate-slide-in transition-smooth"
+                    style={{
+                        background: 'var(--gradient-dark-bg)',
+                        paddingRight: '10px',
+                        paddingTop: '10px',
+                        paddingLeft: '10px',
+                        minWidth: '250px',
+                        maxWidth: '25%',
+                        height: '100vh',
+                        overflow: 'auto',
+                        borderRight: '1px solid var(--color-border)',
+                        boxShadow: '4px 0 12px rgba(0, 0, 0, 0.2)',
+                    }}
+                >
+                    <TreeStructure />
+                </div>
+            )}
             <div
                 style={{
-                    width: "100vw",
-                    height: "100vh"
+                    width: '100%',
+                    height: '100vh',
                 }}
             >
                 <Allotment>
                     <div
                         style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            width: "100%",
-                            height: "100%",
-                            backgroundColor: "#282a36"
-
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'var(--color-editor-bg)',
                         }}
                     >
-
-                    <Allotment
-                        vertical={true}
-                    >
-                        <EditorComponent />
-                        {/* <Divider style={{color: 'white', backgroundColor: '#333254'}} plain>Terminal</Divider> */}
-                        <BrowserTerminal />
-                    </Allotment>
-                        
-                       
-                        
+                        <Allotment vertical={true}>
+                            <EditorComponent />
+                            <BrowserTerminal />
+                        </Allotment>
                     </div>
-                    <div>
+                    <div
+                        style={{
+                            background: 'var(--color-dark-bg)',
+                            padding: 'var(--spacing-md)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'flex-start',
+                        }}
+                    >
                         <Button
+                            type="primary"
                             onClick={() => setLoadBrowser(true)}
+                            className="hover-lift transition-smooth"
+                            style={{
+                                background: 'var(--gradient-primary)',
+                                border: 'none',
+                                borderRadius: 'var(--radius-md)',
+                                fontWeight: '600',
+                            }}
                         >
-                            Load my browser
+                            Load Browser
                         </Button>
-                        { loadBrowser && projectIdFromUrl && terminalSocket && <Browser projectId={projectIdFromUrl} />}
+                        {loadBrowser && projectIdFromUrl && terminalSocket && (
+                            <div style={{ width: '100%', height: '100%', marginTop: 'var(--spacing-md)' }}>
+                                <Browser projectId={projectIdFromUrl} />
+                            </div>
+                        )}
                     </div>
                 </Allotment>
-
             </div>
         </div>
-           
-            {/* <EditorButton isActive={false} /> 
-            <EditorButton isActive={true}/>  */}
-            
-            
-        </>
     )
 }
