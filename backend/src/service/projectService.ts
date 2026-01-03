@@ -1,4 +1,4 @@
-import { v4 as uuid4 } from 'uuid';
+import uuid4 from 'uuid4';
 import { promises as fs } from 'fs';
 import path from 'path';
 import directoryTree from 'directory-tree';
