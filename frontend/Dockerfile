@@ -12,6 +12,10 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Set backend URL for production (empty = use nginx proxy)
+ARG VITE_BACKEND_URL=""
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+
 # Build the app
 RUN npm run build
 
@@ -21,8 +25,8 @@ FROM nginx:alpine
 # Copy built files from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy nginx configuration (optional - using default for now)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port
 EXPOSE 80
