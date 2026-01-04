@@ -8,6 +8,7 @@ import { Server } from "socket.io";
 import chokidar from "chokidar";
 
 import path from "path";
+import { handlerEditorSocketEvents } from './socketHandlers/editorHandlers';
 
 const app: Express = express();
 const server = createServer(app);
@@ -48,7 +49,7 @@ editorNamespace.on("connection", (socket) => {
   let projectId = "123"; // This should be dynamically set based on your application logic
 
   if (projectId) {
-    const watcher = chokidar.watch(`./projects/${projectId}`, {
+    var watcher = chokidar.watch(`./projects/${projectId}`, {
       ignored: (path) => path.includes("node_modules"),
       persistent: true, // Keep the process running
       awaitWriteFinish: {
@@ -60,11 +61,9 @@ editorNamespace.on("connection", (socket) => {
       console.log(event, path);
     });
 
-    socket.on("message", (data) => {
-
-      console.log("Received message from client:", data);
-      const message = JSON.parse(data.toString())
-    });
+  
+  }
+    handlerEditorSocketEvents(socket)
 
 
       socket.on("disconnect", async () => {
@@ -72,7 +71,6 @@ editorNamespace.on("connection", (socket) => {
         console.log("User disconnected from editor namespace:", socket.id);
       });
 
-  }
 });
 
 const PORT = config.PORT;

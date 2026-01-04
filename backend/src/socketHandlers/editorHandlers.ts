@@ -44,7 +44,7 @@ export const handlerEditorSocketEvents = (socket)=>{
         try {
             const data = await fs.readFile(pathToFileOrFolder,);
             socket.emit("readFileSuccess",{
-                data : data
+                data :data.toString()
             })
 
             
@@ -56,4 +56,51 @@ export const handlerEditorSocketEvents = (socket)=>{
         }
     })
 
+    socket.on("deleteFile",async ({pathToFileOrFolder})=>{
+        try {
+            const response = await fs.unlink(pathToFileOrFolder);
+            socket.emit("deleteFileSuccess",{
+                data : "File deleted successfully"
+            })
+
+            
+        } catch (error) {
+            socket.emit("deleteFileError",{
+                error : "Error deleting file: "+error.message
+            })
+            
+        }
+    })
+
+    socket.on("createFolder",async ({pathToFileOrFolder})=>{
+        try {
+            const response = await fs.mkdir(pathToFileOrFolder);
+            socket.emit("createFolderSuccess",{
+                data : "Folder created successfully"
+            })
+
+            
+        } catch (error) {
+            socket.emit("createFolderError",{
+                error : "Error creating folder: "+error.message
+            })
+            
+        }
+    })
+
+    socket.on("deleteFolder",async ({pathToFileOrFolder})=>{
+        try {
+            const response  = await fs.rmdir(pathToFileOrFolder, { recursive: true });
+            socket.emit("deleteFolderSuccess",{
+                data : "Folder deleted successfully"
+            })
+
+            
+        } catch (error) {
+            socket.emit("deleteFolderError",{
+                error : "Error deleting folder: "+error.message
+            })
+            
+        }
+    })
 }
