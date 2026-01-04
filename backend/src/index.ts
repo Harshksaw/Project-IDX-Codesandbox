@@ -8,7 +8,12 @@ import { Server } from 'socket.io';
 
 const app: Express = express();
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server,{
+  cors:{
+    origin: "*",
+    methods: ["GET","POST"]
+  }
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
