@@ -1,7 +1,7 @@
 /* TreeNode Styles with Theme */
 
 .tree-node-container {
-    padding-left: 15px;
+    padding-left: 12px;
     color: var(--color-text-primary);
 }
 
@@ -11,9 +11,9 @@
     outline: none;
     color: var(--color-text-primary);
     background-color: transparent;
-    padding: 12px 15px;
-    fontSize: 16px;
-    margin-top: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    margin-top: 2px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -22,16 +22,38 @@
     border-radius: var(--radius-sm);
     transition: all var(--duration-normal) var(--timing-function);
     font-weight: 500;
+    letter-spacing: 0.2px;
+    position: relative;
+}
+
+.tree-node-folder-button::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: var(--gradient-primary);
+    border-radius: 0 2px 2px 0;
+    transition: height var(--duration-normal) var(--timing-function);
+}
+
+.tree-node-folder-button:hover::before {
+    height: 60%;
 }
 
 .tree-node-folder-button:hover {
     background-color: var(--color-hover);
-    color: var(--color-secondary);
-    transform: translateX(4px);
+    color: var(--color-text-primary);
 }
 
 .tree-node-folder-button:active {
-    transform: translateX(2px);
+    transform: scale(0.98);
+}
+
+.tree-node-folder-button.expanded {
+    color: var(--color-secondary);
 }
 
 .tree-node-icon-arrow {
@@ -39,60 +61,119 @@
     display: flex;
     align-items: center;
     color: var(--color-text-secondary);
+    font-size: 12px;
 }
 
 .tree-node-icon-arrow.expanded {
     color: var(--color-secondary);
+    transform: rotate(0deg);
+}
+
+.tree-node-folder-icon {
+    display: flex;
+    align-items: center;
+    color: #dcb67a;
+    font-size: 16px;
+    transition: all var(--duration-fast) var(--timing-function);
+}
+
+.tree-node-folder-button:hover .tree-node-folder-icon {
+    transform: scale(1.1);
+}
+
+.tree-node-folder-button.expanded .tree-node-folder-icon {
+    color: #f9d77e;
+}
+
+.tree-node-folder-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .tree-node-file {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 10px 12px;
-    margin-top: 4px;
+    padding: 6px 12px;
+    margin-top: 2px;
+    margin-left: 4px;
     cursor: pointer;
     border-radius: var(--radius-sm);
     transition: all var(--duration-normal) var(--timing-function);
+    position: relative;
+}
+
+.tree-node-file::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 0;
+    background: var(--gradient-primary);
+    border-radius: 0 2px 2px 0;
+    transition: height var(--duration-normal) var(--timing-function);
+}
+
+.tree-node-file:hover::before {
+    height: 50%;
 }
 
 .tree-node-file:hover {
     background-color: rgba(124, 58, 237, 0.08);
-    transform: translateX(4px);
 }
 
 .tree-node-file:hover .tree-node-file-name {
-    color: var(--color-secondary);
+    color: var(--color-text-primary);
 }
 
 .tree-node-file:active {
     background-color: rgba(124, 58, 237, 0.12);
-    transform: translateX(2px);
+    transform: scale(0.98);
+}
+
+.tree-node-file.selected {
+    background-color: rgba(124, 58, 237, 0.15);
+}
+
+.tree-node-file.selected::before {
+    height: 70%;
+    background: var(--color-primary);
+}
+
+.tree-node-file.selected .tree-node-file-name {
+    color: var(--color-secondary);
+    font-weight: 500;
 }
 
 .tree-node-file-icon {
     display: flex;
     align-items: center;
-    transition: transform var(--duration-fast) var(--timing-function);
-}
-
-.tree-node-file:hover .tree-node-file-icon {
-    transform: scale(1.1);
+    flex-shrink: 0;
 }
 
 .tree-node-file-name {
     padding-top: 0;
     padding-bottom: 0;
     margin: 0;
-    margin-left: 12px;
-    font-size: 15px;
-    color: var(--color-text-primary);
+    margin-left: 10px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
     transition: color var(--duration-normal) var(--timing-function);
     font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
 }
 
 .tree-node-children {
     animation: slideDown var(--duration-normal) var(--timing-function);
+    border-left: 1px solid rgba(124, 58, 237, 0.15);
+    margin-left: 8px;
 }
 
 @keyframes slideDown {

@@ -85,6 +85,67 @@ export const CreateProject = () => {
                     </Flex>
                 </Col>
             </Row>
+            
+            {/* Watermark Footer */}
+            <div
+                className="animate-fade-in"
+                style={{
+                    position: 'fixed',
+                    bottom: '20px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '10px 20px',
+                    background: 'rgba(26, 27, 38, 0.8)',
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: 'var(--radius-lg)',
+                    border: '1px solid rgba(124, 58, 237, 0.2)',
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+                    animationDelay: '400ms',
+                }}
+            >
+                <span
+                    style={{
+                        color: 'var(--color-text-secondary)',
+                        fontSize: '14px',
+                        fontWeight: '400',
+                    }}
+                >
+                    Built with
+                </span>
+                <span
+                    style={{
+                        color: '#ef4444',
+                        fontSize: '16px',
+                    }}
+                >
+                    ❤️
+                </span>
+                <span
+                    style={{
+                        color: 'var(--color-text-secondary)',
+                        fontSize: '14px',
+                        fontWeight: '400',
+                    }}
+                >
+                    by
+                </span>
+                <span
+                    style={{
+                        background: 'var(--gradient-primary)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        fontSize: '15px',
+                        fontWeight: '700',
+                        letterSpacing: '0.5px',
+                    }}
+                >
+                    Harsh
+                </span>
+            </div>
         </div>
     )
 }

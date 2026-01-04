@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+import { FaFolder, FaFolderOpen } from "react-icons/fa";
 import { FileIcon } from "../../atoms/FileIcon/Fileicon";
 import { useEditorSocketStore } from "../../../store/editorSocketStore";
 import { useFileContextMenuStore } from "../../../store/fileContextMenuStore";
@@ -60,12 +61,15 @@ export const TreeNode = ({
                     /** If the current node is a folder, render it as a button */
                     <button
                         onClick={() => toggleVisibility(fileFolderData.name)}
-                        className="tree-node-folder-button"
+                        className={`tree-node-folder-button ${visibility[fileFolderData.name] ? 'expanded' : ''}`}
                     >
                         <span className={`tree-node-icon-arrow ${visibility[fileFolderData.name] ? 'expanded' : ''}`}>
                             {visibility[fileFolderData.name] ? <IoIosArrowDown /> : <IoIosArrowForward />}
                         </span>
-                        {fileFolderData.name}
+                        <span className="tree-node-folder-icon">
+                            {visibility[fileFolderData.name] ? <FaFolderOpen /> : <FaFolder />}
+                        </span>
+                        <span className="tree-node-folder-name">{fileFolderData.name}</span>
                     </button>
                 ) : (
                     /** If the current node is a file, render it with icon */
@@ -75,7 +79,10 @@ export const TreeNode = ({
                         onDoubleClick={() => handleDoubleClick(fileFolderData)}
                     >
                         <div className="tree-node-file-icon">
-                            <FileIcon extension={computeExtension(fileFolderData)} />
+                            <FileIcon 
+                                extension={computeExtension(fileFolderData)} 
+                                fileName={fileFolderData.name}
+                            />
                         </div>
                         <p className="tree-node-file-name">
                             {fileFolderData.name}

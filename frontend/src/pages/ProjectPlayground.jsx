@@ -56,20 +56,31 @@ export const ProjectPlayground = () => {
         >
             {projectId && (
                 <div
-                    className="animate-slide-in transition-smooth"
+                    className="animate-slide-in transition-smooth sidebar-container"
                     style={{
                         background: 'var(--gradient-dark-bg)',
-                        paddingRight: '10px',
-                        paddingTop: '10px',
-                        paddingLeft: '10px',
+                        padding: '12px',
                         minWidth: '250px',
                         maxWidth: '25%',
                         height: '100vh',
                         overflow: 'auto',
-                        borderRight: '1px solid var(--color-border)',
-                        boxShadow: '4px 0 12px rgba(0, 0, 0, 0.2)',
+                        borderRight: '2px solid rgba(124, 58, 237, 0.2)',
+                        boxShadow: '4px 0 20px rgba(0, 0, 0, 0.3), inset -1px 0 0 rgba(124, 58, 237, 0.1)',
+                        position: 'relative',
                     }}
                 >
+                    <div 
+                        style={{
+                            position: 'absolute',
+                            right: 0,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            width: '3px',
+                            height: '60px',
+                            background: 'linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.4), transparent)',
+                            borderRadius: '2px',
+                        }}
+                    />
                     <TreeStructure />
                 </div>
             )}
@@ -87,6 +98,8 @@ export const ProjectPlayground = () => {
                             width: '100%',
                             height: '100%',
                             backgroundColor: 'var(--color-editor-bg)',
+                            borderRadius: '4px',
+                            overflow: 'hidden',
                         }}
                     >
                         <Allotment vertical={true}>
@@ -96,14 +109,28 @@ export const ProjectPlayground = () => {
                     </div>
                     <div
                         style={{
-                            background: 'var(--color-dark-bg)',
+                            background: 'linear-gradient(135deg, var(--color-dark-bg) 0%, rgba(45, 45, 68, 0.8) 100%)',
                             padding: 'var(--spacing-md)',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'flex-start',
+                            borderLeft: '1px solid rgba(124, 58, 237, 0.15)',
+                            position: 'relative',
                         }}
                     >
+                        <div 
+                            style={{
+                                position: 'absolute',
+                                left: 0,
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                width: '3px',
+                                height: '60px',
+                                background: 'linear-gradient(180deg, transparent, rgba(6, 182, 212, 0.4), transparent)',
+                                borderRadius: '2px',
+                            }}
+                        />
                         <Button
                             type="primary"
                             onClick={() => setLoadBrowser(true)}
