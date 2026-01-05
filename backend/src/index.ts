@@ -6,9 +6,10 @@ import type { ApiResponse } from "./types";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 import chokidar from "chokidar";
+import queryString from "query-string";
 
-import path from "path";
 import { handlerEditorSocketEvents } from './socketHandlers/editorHandlers';
+
 
 const app: Express = express();
 const server = createServer(app);
@@ -44,9 +45,9 @@ io.on("connection", (socket) => {
 const editorNamespace = io.of("/editor");
 
 editorNamespace.on("connection", (socket) => {
-  console.log("A user connected to editor namespace:", socket.id);
 
-  let projectId = "123"; // This should be dynamically set based on your application logic
+
+  let projectId = socket.handshake.query['projectId'] ; // This should be dynamically set based on your application logic
 
   if (projectId) {
     var watcher = chokidar.watch(`./projects/${projectId}`, {
