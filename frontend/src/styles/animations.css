@@ -205,3 +205,49 @@
   box-shadow: 0 0 0 3px var(--color-focus);
   border-radius: var(--radius-sm);
 }
+
+/* Editor-specific Animations */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes typing-indicator {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.shimmer-effect {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(124, 58, 237, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+.gradient-background {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}

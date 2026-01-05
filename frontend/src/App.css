@@ -24,26 +24,108 @@
   transform: translateY(0);
 }
 
-/* Allotment sash styling */
+/* Allotment sash (separator/divider) styling */
 .split-view-view {
   background-color: var(--color-dark-bg) !important;
 }
 
+/* Base sash styles */
 .sash {
-  background-color: var(--color-border) !important;
-  transition: background-color var(--duration-normal) var(--timing-function) !important;
+  background-color: rgba(124, 58, 237, 0.15) !important;
+  transition: all var(--duration-normal) var(--timing-function) !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.sash::before {
+  content: '';
+  position: absolute;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--timing-function);
+  border-radius: 4px;
 }
 
 .sash:hover {
   background-color: var(--color-primary) !important;
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.5) !important;
 }
 
+.sash:hover::before {
+  opacity: 1;
+}
+
+.sash:active {
+  background-color: var(--color-secondary) !important;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.6) !important;
+}
+
+/* Horizontal sash (top-bottom splitter) */
 .sash-horizontal {
-  height: 2px !important;
+  height: 4px !important;
+  cursor: row-resize !important;
+  margin: 0 !important;
 }
 
+.sash-horizontal::before {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 4px;
+}
+
+.sash-horizontal::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  transition: all var(--duration-normal) var(--timing-function);
+}
+
+.sash-horizontal:hover::after {
+  width: 48px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
+}
+
+/* Vertical sash (left-right splitter) */
 .sash-vertical {
-  width: 2px !important;
+  width: 4px !important;
+  cursor: col-resize !important;
+  margin: 0 !important;
+}
+
+.sash-vertical::before {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 60px;
+}
+
+.sash-vertical::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  transition: all var(--duration-normal) var(--timing-function);
+}
+
+.sash-vertical:hover::after {
+  height: 48px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
 }
 
 /* Custom utility classes that might be used throughout the app */
