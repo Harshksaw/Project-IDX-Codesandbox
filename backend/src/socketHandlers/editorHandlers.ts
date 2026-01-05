@@ -42,9 +42,10 @@ export const handlerEditorSocketEvents = (socket)=>{
 
     socket.on("readFile",async ({pathToFileOrFolder})=>{
         try {
-            const data = await fs.readFile(pathToFileOrFolder,);
+            const data = await fs.readFile(pathToFileOrFolder);
             socket.emit("readFileSuccess",{
-                data :data.toString()
+                value: data.toString(),
+                path: pathToFileOrFolder
             })
 
             
@@ -72,7 +73,7 @@ export const handlerEditorSocketEvents = (socket)=>{
         }
     })
 
-    socket.on("createFolder",async ({pathToFileOrFolder})=>{
+    socket.on("createFolder",async ({pathToFileOrFolder })=>{
         try {
             const response = await fs.mkdir(pathToFileOrFolder);
             socket.emit("createFolderSuccess",{

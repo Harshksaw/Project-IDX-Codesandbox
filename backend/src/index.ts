@@ -46,11 +46,11 @@ const editorNamespace = io.of("/editor");
 
 editorNamespace.on("connection", (socket) => {
 
-
   let projectId = socket.handshake.query['projectId'] ; // This should be dynamically set based on your application logic
+  let watcher: ReturnType<typeof chokidar.watch> | null = null;
 
   if (projectId) {
-    var watcher = chokidar.watch(`./projects/${projectId}`, {
+    watcher = chokidar.watch(`./projects/${projectId}`, {
       ignored: (path) => path.includes("node_modules"),
       persistent: true, // Keep the process running
       awaitWriteFinish: {
@@ -58,9 +58,9 @@ editorNamespace.on("connection", (socket) => {
       },
       ignoreInitial: true,
     });
-    watcher.on("all", (event, path) => {
-      console.log(event, path);
-    });
+    // watcher.on("all", (event, path) => {
+    //   console.log(event, path);
+    // });
 
   
   }
@@ -68,7 +68,9 @@ editorNamespace.on("connection", (socket) => {
 
 
       socket.on("disconnect", async () => {
-        await watcher.close();
+        if (watcher) {
+          await watcher.close();
+        }
         console.log("User disconnected from editor namespace:", socket.id);
       });
 

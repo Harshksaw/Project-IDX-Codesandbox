@@ -12,6 +12,7 @@ export const EditorComponent = () => {
     });
 
     const { activeFileTab } = useActiveFileTabStore();
+    console.log("🚀 ~ EditorComponent ~ activeFileTab:", activeFileTab)
 
     const { editorSocket } = useEditorSocketStore();
 
@@ -67,7 +68,7 @@ export const EditorComponent = () => {
                     width="100%"
                     height="100%"
                     defaultLanguage={undefined}
-                    defaultValue="// Welcome to the playground"
+                    defaultValue={"// Welcome to the playground"}
                     options={{
                         fontSize: 16,
                         fontFamily: '"Fira Code", "Cascadia Code", "JetBrains Mono", Consolas, monospace',
