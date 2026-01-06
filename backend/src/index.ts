@@ -76,6 +76,25 @@ editorNamespace.on("connection", (socket) => {
 
 });
 
+const terminalNamespace = io.of("/terminal");
+
+terminalNamespace.on("connection", (socket) => {
+  console.log("A user connected to terminal namespace:", socket.id);
+
+  socket.on("shell-input", (data) => {
+    console.log(`Received shell input from ${socket.id}:`, data);
+    terminalNamespace.to(socket.id).emit("shell-output", `Echo: ${data}`);
+  })
+  
+
+
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected from terminal namespace:", socket.id);
+  });
+
+});
+
 const PORT = config.PORT;
 
 server.listen(PORT, () => {

@@ -1,39 +1,22 @@
-# Build stage
-FROM node:20-alpine AS builder
+FROM ubutnu:20.04
 
-WORKDIR /app
+RUN useradd -ms /bin/bash sandbox
 
-# Copy package files
-COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+WORKDIR /home/sandbox
 
-# Copy source code
-COPY . .
 
-# Build TypeScript
-RUN npm run build
+RUN apt update && apt upgrade -y
 
-# Production stage
-FROM node:20-alpine
+RUN apt install nano curl -y
 
-WORKDIR /app
+RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && \
+    apt install -y nodejs
 
-# Copy package files
-COPY package*.json ./
+#configure terminal to display current working directory
 
-# Install production dependencies only
-RUN npm ci --only=production
+RUN echo "PS1='\w \$ '" >> /home/sandbox/.bashrc
 
-# Copy built files from builder
-COPY --from=builder /app/dist ./dist
+#setup final working directory
 
-# Expose port
-EXPOSE 3000
-
-# Set environment
-ENV NODE_ENV=production
-
-# Start the application
-CMD ["node", "dist/index.js"]
+WORKDIR /home/sandbox/app
