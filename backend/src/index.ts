@@ -9,6 +9,7 @@ import chokidar from "chokidar";
 import queryString from "query-string";
 
 import { handlerEditorSocketEvents } from './socketHandlers/editorHandlers';
+import { handleContainerCreate } from "./containers/handlerContinerCreate";
 
 
 const app: Express = express();
@@ -80,14 +81,12 @@ const terminalNamespace = io.of("/terminal");
 
 terminalNamespace.on("connection", (socket) => {
   console.log("A user connected to terminal namespace:", socket.id);
-
-  socket.on("shell-input", (data) => {
-    console.log(`Received shell input from ${socket.id}:`, data);
-    terminalNamespace.to(socket.id).emit("shell-output", `Echo: ${data}`);
-  })
-  
+  let projectId = socket.handshake.query['projectId'] ;
 
 
+
+
+  handleContainerCreate(socket,projectId )
 
   socket.on("disconnect", () => {
     console.log("User disconnected from terminal namespace:", socket.id);
