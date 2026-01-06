@@ -6,9 +6,10 @@ export const handlerEditorSocketEvents = (socket)=>{
     socket.on("writeFile",async ({data, pathToFile})=>{
 
         try {
-            const respone = await fs.writeFile(pathToFileOrFolder, data);
+            const respone = await fs.writeFile(pathToFile, data);
             socket.emit("writeFileSuccess",{
-                data : "File written successfully"
+                data : "File written successfully",
+                path:pathToFile
             })
 
             
