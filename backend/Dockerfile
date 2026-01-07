@@ -10,7 +10,7 @@ RUN apt update && apt upgrade -y
 
 RUN apt install nano curl -y
 
-RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && \
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt install -y nodejs
 
 #configure terminal to display current working directory

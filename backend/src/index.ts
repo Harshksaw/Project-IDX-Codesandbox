@@ -6,11 +6,11 @@ import type { ApiResponse } from "./types";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 import chokidar from "chokidar";
-import queryString from "query-string";
-
-import { handlerEditorSocketEvents } from './socketHandlers/editorHandlers';
+// import queryString from "query-string";
+import { handlerEditorSocketEvents } from "./socketHandlers/editorHandlers";
 import { handleContainerCreate } from "./containers/handlerContinerCreate";
-
+import { WebsocketServer } from "ws";
+import { handlerTerminalCreation } from "./containers/handlerTerminalCreation";
 
 const app: Express = express();
 const server = createServer(app);
@@ -46,8 +46,7 @@ io.on("connection", (socket) => {
 const editorNamespace = io.of("/editor");
 
 editorNamespace.on("connection", (socket) => {
-
-  let projectId = socket.handshake.query['projectId'] ; // This should be dynamically set based on your application logic
+  let projectId = socket.handshake.query["projectId"]; // This should be dynamically set based on your application logic
   let watcher: ReturnType<typeof chokidar.watch> | null = null;
 
   if (projectId) {
@@ -62,39 +61,69 @@ editorNamespace.on("connection", (socket) => {
     // watcher.on("all", (event, path) => {
     //   console.log(event, path);
     // });
-
-  
   }
-    handlerEditorSocketEvents(socket)
+  handlerEditorSocketEvents(socket);
 
-
-      socket.on("disconnect", async () => {
-        if (watcher) {
-          await watcher.close();
-        }
-        console.log("User disconnected from editor namespace:", socket.id);
-      });
-
+  socket.on("disconnect", async () => {
+    if (watcher) {
+      await watcher.close();
+    }
+    console.log("User disconnected from editor namespace:", socket.id);
+  });
 });
 
 const terminalNamespace = io.of("/terminal");
 
 terminalNamespace.on("connection", (socket) => {
   console.log("A user connected to terminal namespace:", socket.id);
-  let projectId = socket.handshake.query['projectId'] ;
+  let projectId = socket.handshake.query["projectId"];
 
-
-
-
-  handleContainerCreate(socket,projectId )
+  // handleContainerCreate(socket, projectId, req,);
 
   socket.on("disconnect", () => {
     console.log("User disconnected from terminal namespace:", socket.id);
   });
-
 });
 
 const PORT = config.PORT;
+
+const webSocketForTerminal = new WebsocketServer({
+  noServer: true,
+});
+
+server.on("upgrade", (req, tcpSocket, head) => {
+  const isTerminal = req.url.includes("/terminal");
+
+  if (isTerminal) {
+    console.log("Upgrading terminal websocket");
+
+    const projectId = req.url.split("=")[1];
+    handleContainerCreate(
+      projectId,
+      webSocketForTerminal,
+      req,
+      tcpSocket,
+      head
+    );
+  }
+});
+
+webSocketForTerminal.on("connection", (ws, req, container) => {
+  console.log("New terminal websocket connection");
+
+  handlerTerminalCreation()
+
+  ws.on("close", async () => {
+    console.log("Terminal websocket disconnected");
+    container.remove({ force: true }, (err) => {
+      if (err) {
+        console.error("Error removing container:", err);
+      } else {
+        console.log("Container removed successfully");
+      }
+    });
+  });
+});
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
