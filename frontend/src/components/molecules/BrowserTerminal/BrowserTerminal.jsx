@@ -41,7 +41,7 @@ export const BrowserTerminal = () => {
             terminalSocket.onopen = () => {
                 const attachAddon = new AttachAddon(terminalSocket);
                 term.loadAddon(attachAddon);
-                // socket.current = ws;
+                socket.current = ws;
             }
         }
 
