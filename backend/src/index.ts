@@ -111,7 +111,7 @@ server.on("upgrade", (req, tcpSocket, head) => {
 webSocketForTerminal.on("connection", (ws, req, container) => {
   console.log("New terminal websocket connection");
 
-  handlerTerminalCreation()
+  handlerTerminalCreation(container,ws)
 
   ws.on("close", async () => {
     console.log("Terminal websocket disconnected");
