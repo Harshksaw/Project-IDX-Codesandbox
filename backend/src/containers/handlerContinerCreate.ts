@@ -1,9 +1,20 @@
 import Docker from "dockerode";
 
 
+
 const docker = new Docker();
 
-export const handleContainerCreate = async ( socket, projectId, req, tcpSocket, head) => {
+
+
+export const listContainers = async () => {
+  const docker = await Docker.listContainers();
+  return docker;
+
+
+}
+
+
+export const handleContainerCreate = async ( terminalSocket, projectId, req, tcpSocket, head) => {
   try {
     const container = await docker.createContainer({
       Image: "sandbox",
@@ -16,7 +27,7 @@ export const handleContainerCreate = async ( socket, projectId, req, tcpSocket, 
         ExposedPorts: {
           "5173/tcp": {},
         },
-        Env: ["HOST=0.0.0.0"],
+      Env: ["HOST=0.0.0.0"],
       HostConfig: {
         Binds: [`${process.cwd()}/../projects/${projectId}:/home/sandbox/app`],
         PortBindings: {
@@ -33,8 +44,9 @@ export const handleContainerCreate = async ( socket, projectId, req, tcpSocket, 
 
     await container.start();
 
-    socket.handleUpgrade(req, tcpSocket, head , Headers, (establishedWSConn)=>{
-      establishedWSConn.emit("connection", establishedWSConn, req, container);
+    //we upgrade the tcp socket to websocket here
+    terminalSocket.handleUpgrade(req, tcpSocket, head , Headers, (establishedWSConn)=>{
+      terminalSocket.emit("connection", establishedWSConn, req, container);
 
     })
 
@@ -62,7 +74,7 @@ export const handleContainerCreate = async ( socket, projectId, req, tcpSocket, 
     // })
   } catch (error) {
     console.error("Error creating container:", error);
-    socket.emit("containerError", { message: "Failed to create container." });
+    terminalSocket.emit("containerError", { message: "Failed to create container." });
     return;
   }
 };

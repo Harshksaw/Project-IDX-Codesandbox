@@ -8,7 +8,7 @@ import { Server } from "socket.io";
 import chokidar from "chokidar";
 // import queryString from "query-string";
 import { handlerEditorSocketEvents } from "./socketHandlers/editorHandlers";
-import { handleContainerCreate } from "./containers/handlerContinerCreate";
+import { handleContainerCreate, listContainers } from "./containers/handlerContinerCreate";
 import { WebsocketServer } from "ws";
 import { handlerTerminalCreation } from "./containers/handlerTerminalCreation";
 
@@ -62,6 +62,12 @@ editorNamespace.on("connection", (socket) => {
     //   console.log(event, path);
     // });
   }
+
+  socket.on("getPort", ()=>{
+    console.log("Received getPort request in editor namespace");
+    listContainers()
+    
+  })
   handlerEditorSocketEvents(socket);
 
   socket.on("disconnect", async () => {
@@ -112,6 +118,11 @@ webSocketForTerminal.on("connection", (ws, req, container) => {
   console.log("New terminal websocket connection");
 
   handlerTerminalCreation(container,ws)
+
+
+  ws.on("getPort",()=>{
+    console.log("Received getPort request");
+  })
 
   ws.on("close", async () => {
     console.log("Terminal websocket disconnected");
