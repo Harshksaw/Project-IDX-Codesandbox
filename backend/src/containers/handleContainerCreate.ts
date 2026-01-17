@@ -32,51 +32,48 @@ export const handleContainerCreate = async (projectId, terminalSocket, req, tcpS
 
         console.log("Creating a new container");
 
-        const container = await docker.createContainer({
-            Image: 'sandbox', // name given by us for the written dockerfile
-            AttachStdin: true,
-            AttachStdout: true,
-            AttachStderr: true,
-            Cmd: ['/bin/bash'],
-            name: projectId,
-            Tty: true,
-            User: "sandbox",
-            Volumes: {
-                "/home/sandbox/app": {}
-            },
-            ExposedPorts: {
-                    "5173/tcp": {}
-            },
-            Env: ["HOST=0.0.0.0"],
-            HostConfig: {
-                Binds: [ // mounting the project directory to the container
-                    `${process.cwd()}/projects/${projectId}:/home/sandbox/app`
-                ],
-                PortBindings: {
-                    "5173/tcp": [
-                        {
-                            "HostPort": "0" // random port will be assigned by docker
-                        }
-                    ]
+        try {
+            const container = await docker.createContainer({
+                Image: 'sandbox', // name given by us for the written dockerfile
+                AttachStdin: true,
+                AttachStdout: true,
+                AttachStderr: true,
+                Cmd: ['/bin/bash'],
+                name: projectId,
+                Tty: true,
+                User: "sandbox",
+                Volumes: {
+                    "/home/sandbox/app": {}
                 },
-                
-            }
-        });
-    
-        console.log("Container created", container.id);
+                ExposedPorts: {
+                        "5173/tcp": {}
+                },
+                Env: ["HOST=0.0.0.0"],
+                HostConfig: {
+                    Binds: [ // mounting the project directory to the container
+                        `${process.cwd()}/projects/${projectId}:/home/sandbox/app`
+                    ],
+                    PortBindings: {
+                        "5173/tcp": [
+                            {
+                                "HostPort": "0" // random port will be assigned by docker
+                            }
+                        ]
+                    },
+                }
+            });
+        
+            console.log("Container created", container.id);
 
-        await container.start();
+            await container.start();
 
-        console.log("container started");
+            console.log("container started");
 
-        // Below is the place where we upgrade the connection to websocket
-        // terminalSocket.handleUpgrade(req, tcpSocket, head, (establishedWSConn) => {
-        //     console.log("Connection upgraded to websocket");
-        //     terminalSocket.emit("connection", establishedWSConn, req, container);
-        // });
-
-        return container;
-
+            return container;
+        } catch (error) {
+            console.error("Error while creating or starting container:", error);
+            throw error;
+        }
 
 
     } catch(error) {

@@ -23,9 +23,9 @@ export const ProjectPlayground = () => {
     const [loadBrowser, setLoadBrowser] = useState(false);
 
     useEffect(() => {
-        if(projectIdFromUrl) {
+        if (projectIdFromUrl) {
             setProjectId(projectIdFromUrl);
-        
+
             const editorSocketConn = io(`${import.meta.env.VITE_BACKEND_URL}/editor`, {
                 query: {
                     projectId: projectIdFromUrl
@@ -33,15 +33,33 @@ export const ProjectPlayground = () => {
             });
 
             try {
-                const ws = new WebSocket("ws://localhost:4000/terminal?projectId="+projectIdFromUrl);
+                if (!projectIdFromUrl) {
+                    throw new Error("Project ID is undefined. Cannot establish WebSocket connection.");
+                }
+
+                const ws = new WebSocket(`ws://localhost:4000/terminal?projectId=${projectIdFromUrl}`);
+
+                ws.onopen = () => {
+                    console.log("WebSocket connection established.");
+                };
+
+                ws.onerror = (error) => {
+                    console.error("WebSocket error:", error);
+                };
+
+                ws.onclose = (event) => {
+                    console.warn("WebSocket connection closed:", event);
+                };
+
                 setTerminalSocket(ws);
-                
-            } catch(error) {
-                console.log("error in ws", error);
+            } catch (error) {
+                console.error("Error initializing WebSocket:", error);
             }
+
             setEditorSocket(editorSocketConn);
+        } else {
+            console.error("Project ID is missing from the URL.");
         }
-        
     }, [setProjectId, projectIdFromUrl, setEditorSocket, setTerminalSocket]);
 
     return (

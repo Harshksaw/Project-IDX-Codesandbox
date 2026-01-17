@@ -1,6 +1,9 @@
-
-
 export const handleTerminalCreation = (container, ws) => {
+    if (!container) {
+        console.error("Container is undefined. Cannot execute commands.");
+        return;
+    }
+
     container.exec({
         Cmd: ["/bin/bash"],
         AttachStdin: true,

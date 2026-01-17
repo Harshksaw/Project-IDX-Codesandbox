@@ -1,11 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'node:http';
-
+import { handleContainerCreate, listContainer } from './containers/handleContainerCreate.js';
 import { WebSocketServer } from 'ws';
-import { handlerTerminalCreation } from './containers/handleTerminalCreation';
-import { handleContainerCreate } from './containers/handleContainerCreate';
-
+import { handleTerminalCreation } from './containers/handleTerminalCreation.js';
 
 
 const app = express();
@@ -35,7 +33,7 @@ webSocketForTerminal.on("connection", async (ws, req, container) => {
 
         const container = await handleContainerCreate(projectId, webSocketForTerminal);
 
-        handlerTerminalCreation(container, ws);
+        handleTerminalCreation(container, ws);
     }
     
 });
