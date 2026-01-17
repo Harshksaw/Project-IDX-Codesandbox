@@ -1,0 +1,30 @@
+version: '3.8'
+
+# Development docker-compose
+# Usage: docker-compose -f docker-compose.dev.yml up
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.server
+    container_name: codeexpo-backend-dev
+    ports:
+      - "3000:3000"
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - TERMINAL_PORT=4000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./backend:/app
+      - ./projects:/app/projects
+      - /app/node_modules
+    command: npm run dev
+    networks:
+      - codeexpo-network
+
+networks:
+  codeexpo-network:
+    driver: bridge

@@ -11,6 +11,7 @@ import { Browser } from "../components/organisms/Browser/Browser";
 import { Button, Tooltip } from "antd";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
+import { getWebSocketURL, getSocketIOURL } from "../config/axiosConfig";
 import {
     PlayCircleOutlined,
     GlobalOutlined,
@@ -47,7 +48,7 @@ export const ProjectPlayground = () => {
         if (projectIdFromUrl) {
             setProjectId(projectIdFromUrl);
 
-            const editorSocketConn = io(`${import.meta.env.VITE_BACKEND_URL}/editor`, {
+            const editorSocketConn = io(`${getSocketIOURL()}/editor`, {
                 query: {
                     projectId: projectIdFromUrl
                 }
@@ -58,7 +59,8 @@ export const ProjectPlayground = () => {
                     throw new Error("Project ID is undefined. Cannot establish WebSocket connection.");
                 }
 
-                const ws = new WebSocket(`ws://localhost:4000/terminal?projectId=${projectIdFromUrl}`);
+                const wsUrl = getWebSocketURL(`/terminal?projectId=${projectIdFromUrl}`);
+                const ws = new WebSocket(wsUrl);
 
                 ws.onopen = () => {
                     console.log("WebSocket connection established.");
