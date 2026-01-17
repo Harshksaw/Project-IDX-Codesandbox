@@ -1,6 +1,13 @@
 import Docker from 'dockerode';
-// import path from 'path';
+import path from 'path';
+
 const docker = new Docker();
+
+// Get projects path - use HOST_PROJECTS_PATH env var in production (Docker)
+// This is needed because sibling containers need host paths, not container paths
+const getProjectsPath = () => {
+    return process.env.HOST_PROJECTS_PATH || path.resolve(process.cwd(), 'projects');
+};
 
 export const listContainer = async () => {
 
@@ -51,7 +58,7 @@ export const handleContainerCreate = async (projectId, terminalSocket, req, tcpS
                 Env: ["HOST=0.0.0.0"],
                 HostConfig: {
                     Binds: [ // mounting the project directory to the container
-                        `${process.cwd()}/projects/${projectId}:/home/sandbox/app`
+                        `${getProjectsPath()}/${projectId}:/home/sandbox/app`
                     ],
                     PortBindings: {
                         "5173/tcp": [

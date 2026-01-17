@@ -4,37 +4,53 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
-    container_name: backend
+      dockerfile: Dockerfile.server
+    container_name: codeexpo-backend
     ports:
       - "3000:3000"
+      - "4000:4000"
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - REACT_PROJECT_COMMAND=npm create vite@latest
+      - TERMINAL_PORT=4000
+      # HOST_PROJECTS_PATH is the path on the HOST machine where projects are stored
+      # This is needed for sibling containers to mount the correct path
+      - HOST_PROJECTS_PATH=${PWD}/projects
     volumes:
-      - backend-projects:/app/projects
+      # Mount Docker socket for container management (Docker-out-of-Docker)
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Persist projects - mount host path into backend container
+      - ./projects:/app/projects
     restart: unless-stopped
     networks:
-      - app-network
+      - codeexpo-network
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: frontend
+      args:
+        - VITE_BACKEND_URL=
+    container_name: codeexpo-frontend
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - backend
     restart: unless-stopped
     networks:
-      - app-network
+      - codeexpo-network
 
-volumes:
-  backend-projects:
-    driver: local
+  # Sandbox base image builder (run once to build the sandbox image)
+  # Usage: docker-compose --profile build-sandbox build sandbox-builder
+  sandbox-builder:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: sandbox:latest
+    profiles:
+      - build-sandbox
 
 networks:
-  app-network:
+  codeexpo-network:
     driver: bridge

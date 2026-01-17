@@ -1,0 +1,28 @@
+# Backend API Server Dockerfile
+FROM node:20-alpine
+
+# Install Docker CLI for container management
+RUN apk add --no-cache docker-cli
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy source code
+COPY . .
+
+# Build TypeScript
+RUN npm run build
+
+# Create projects directory
+RUN mkdir -p /app/projects
+
+# Expose ports (API: 3000, Terminal WebSocket: 4000)
+EXPOSE 3000 4000
+
+# Start both servers using a simple script
+CMD ["sh", "-c", "node dist/index.js & node dist/terminalApp.js"]
