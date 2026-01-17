@@ -2,6 +2,7 @@ import { Button, Card, Col, Row, Spin } from "antd";
 import { useCreateProject } from "../hooks/apis/mutations/useCreateProject"
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { listProjectsApi, deleteProjectApi } from "../apis/projects";
 import {
     CodeOutlined,
     CloudServerOutlined,
@@ -9,9 +10,48 @@ import {
     PlayCircleOutlined,
     RocketOutlined,
     ApiOutlined,
-    DatabaseOutlined,
-    DesktopOutlined
+    FolderOpenOutlined,
+    DesktopOutlined,
+    DeleteOutlined,
+    ClockCircleOutlined
 } from "@ant-design/icons";
+
+// Fun project name generator
+const ADJECTIVES = ['Swift', 'Cosmic', 'Neon', 'Pixel', 'Quantum', 'Stellar', 'Cyber', 'Nova', 'Atomic', 'Blazing', 'Crystal', 'Dynamic'];
+const NOUNS = ['Phoenix', 'Voyager', 'Nebula', 'Spark', 'Rocket', 'Comet', 'Thunder', 'Horizon', 'Pulse', 'Wave', 'Storm', 'Forge'];
+
+const generateProjectName = (framework) => {
+    const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+    const noun = NOUNS[Math.floor(Math.random() * NOUNS.length)];
+    const frameworkShort = framework?.split('-')[0] || 'App';
+    return `${adj} ${noun}`;
+};
+
+const getFrameworkIcon = (framework) => {
+    const icons = {
+        'vite-react': '⚛️',
+        'vite-vue': '🟢',
+        'next-js': '▲',
+        'express-js': '🚀',
+        'node-typescript': '📘',
+        'vite-svelte': '🔶',
+    };
+    return icons[framework] || '📁';
+};
+
+const formatTimeAgo = (date) => {
+    const now = new Date();
+    const past = new Date(date);
+    const diffMs = now - past;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${diffDays}d ago`;
+};
 
 const FRAMEWORKS = [
     {
@@ -92,6 +132,23 @@ export const CreateProject = () => {
     const navigate = useNavigate();
     const [selectedFramework, setSelectedFramework] = useState(null);
     const [isCreating, setIsCreating] = useState(false);
+    const [recentProjects, setRecentProjects] = useState([]);
+    const [loadingProjects, setLoadingProjects] = useState(true);
+
+    // Fetch recent projects on mount
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const projects = await listProjectsApi();
+                setRecentProjects(projects.slice(0, 6)); // Show max 6 recent projects
+            } catch (error) {
+                console.log("Error fetching projects", error);
+            } finally {
+                setLoadingProjects(false);
+            }
+        };
+        fetchProjects();
+    }, []);
 
     async function handleCreateProject(framework) {
         if (isCreating) return;
@@ -100,8 +157,10 @@ export const CreateProject = () => {
         setSelectedFramework(framework.type);
 
         try {
+            const projectName = generateProjectName(framework.type);
             const response = await createProjectMutation({
                 framework: framework.type,
+                name: projectName,
                 devCommand: framework.devCommand
             });
             // Store the dev command for later use
@@ -115,6 +174,20 @@ export const CreateProject = () => {
         }
     }
 
+    const handleOpenProject = (projectId) => {
+        navigate(`/project/${projectId}`);
+    };
+
+    const handleDeleteProject = async (e, projectId) => {
+        e.stopPropagation();
+        try {
+            await deleteProjectApi(projectId);
+            setRecentProjects(prev => prev.filter(p => p.id !== projectId));
+        } catch (error) {
+            console.log("Error deleting project", error);
+        }
+    };
+
     return (
         <div
             className="animate-fade-in"
@@ -126,29 +199,75 @@ export const CreateProject = () => {
                 paddingBottom: '80px',
             }}
         >
-            {/* Top Bar - Created By */}
+            {/* Top Header Bar */}
             <div style={{
                 padding: '12px 24px',
                 background: 'linear-gradient(90deg, rgba(250, 204, 21, 0.1), rgba(124, 58, 237, 0.1))',
                 borderBottom: '1px solid rgba(250, 204, 21, 0.3)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
+                justifyContent: 'space-between',
             }}>
-                <span style={{ color: '#fbbf24', fontSize: 14, fontWeight: 600 }}>
-                    Created by
-                </span>
-                <span style={{
-                    background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    fontSize: 16,
-                    fontWeight: 700,
-                    letterSpacing: '0.5px',
+                {/* Logo - Left */}
+                <div
+                    onClick={() => navigate('/')}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                >
+                    <div style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '10px',
+                        background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 12px rgba(250, 204, 21, 0.3)',
+                    }}>
+                        <CodeOutlined style={{ color: '#1a1a2e', fontSize: 20, fontWeight: 'bold' }} />
+                    </div>
+                    <span style={{
+                        background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        fontSize: 20,
+                        fontWeight: 800,
+                        letterSpacing: '-0.5px',
+                    }}>
+                        CodeExpo
+                    </span>
+                </div>
+
+                {/* Created By - Right */}
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
                 }}>
-                    Harsh Kumar
-                </span>
+                    <span style={{ color: '#9ca3af', fontSize: 13, fontWeight: 500 }}>
+                        Created by
+                    </span>
+                    <span style={{
+                        background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        fontSize: 14,
+                        fontWeight: 700,
+                    }}>
+                        Harsh Kumar
+                    </span>
+                </div>
             </div>
 
             {/* Hero Section */}
@@ -185,7 +304,7 @@ export const CreateProject = () => {
                     marginBottom: '16px',
                     letterSpacing: '-0.02em',
                 }}>
-                    Code Playground
+                    CodeExpo
                 </h1>
 
                 <p style={{
@@ -199,6 +318,119 @@ export const CreateProject = () => {
                     No setup required.
                 </p>
             </div>
+
+            {/* Recent Projects Section */}
+            {recentProjects.length > 0 && (
+                <div style={{
+                    padding: '40px 20px',
+                    maxWidth: '1200px',
+                    margin: '0 auto',
+                    borderBottom: '1px solid rgba(250, 204, 21, 0.15)',
+                }}>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '12px',
+                        marginBottom: '24px',
+                    }}>
+                        <FolderOpenOutlined style={{ color: '#fbbf24', fontSize: 24 }} />
+                        <h2 style={{
+                            color: '#f3f4f6',
+                            fontSize: '1.5rem',
+                            fontWeight: 600,
+                            margin: 0,
+                        }}>
+                            Recent Projects
+                        </h2>
+                    </div>
+
+                    <Row gutter={[16, 16]} justify="center">
+                        {recentProjects.map((project, idx) => (
+                            <Col xs={24} sm={12} md={8} lg={4} key={project.id}>
+                                <div
+                                    className="animate-scale-in"
+                                    onClick={() => handleOpenProject(project.id)}
+                                    style={{
+                                        background: 'linear-gradient(135deg, rgba(55, 55, 75, 0.9), rgba(45, 45, 65, 0.95))',
+                                        border: '1px solid rgba(156, 163, 175, 0.25)',
+                                        borderRadius: '12px',
+                                        padding: '16px',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.3s ease',
+                                        animationDelay: `${idx * 50}ms`,
+                                        position: 'relative',
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.borderColor = 'rgba(250, 204, 21, 0.5)';
+                                        e.currentTarget.style.transform = 'translateY(-4px)';
+                                        e.currentTarget.style.boxShadow = '0 8px 24px rgba(250, 204, 21, 0.15)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.borderColor = 'rgba(156, 163, 175, 0.25)';
+                                        e.currentTarget.style.transform = 'translateY(0)';
+                                        e.currentTarget.style.boxShadow = 'none';
+                                    }}
+                                >
+                                    {/* Delete button */}
+                                    <Button
+                                        type="text"
+                                        size="small"
+                                        icon={<DeleteOutlined />}
+                                        onClick={(e) => handleDeleteProject(e, project.id)}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '8px',
+                                            right: '8px',
+                                            color: '#6b7280',
+                                            opacity: 0.6,
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.color = '#ef4444';
+                                            e.currentTarget.style.opacity = 1;
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.color = '#6b7280';
+                                            e.currentTarget.style.opacity = 0.6;
+                                        }}
+                                    />
+
+                                    <div style={{
+                                        fontSize: '1.5rem',
+                                        marginBottom: '8px',
+                                    }}>
+                                        {getFrameworkIcon(project.framework)}
+                                    </div>
+
+                                    <h4 style={{
+                                        color: '#f3f4f6',
+                                        fontSize: '0.9rem',
+                                        fontWeight: 600,
+                                        marginBottom: '4px',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        paddingRight: '20px',
+                                    }}>
+                                        {project.name}
+                                    </h4>
+
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        color: '#6b7280',
+                                        fontSize: '0.75rem',
+                                    }}>
+                                        <ClockCircleOutlined style={{ fontSize: 10 }} />
+                                        <span>{formatTimeAgo(project.createdAt)}</span>
+                                    </div>
+                                </div>
+                            </Col>
+                        ))}
+                    </Row>
+                </div>
+            )}
 
             {/* Features Section */}
             <div style={{

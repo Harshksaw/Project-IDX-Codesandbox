@@ -16,7 +16,8 @@ import {
     GlobalOutlined,
     CodeOutlined,
     StopOutlined,
-    ReloadOutlined
+    ReloadOutlined,
+    FolderOpenOutlined
 } from "@ant-design/icons";
 
 export const ProjectPlayground = () => {
@@ -105,75 +106,63 @@ export const ProjectPlayground = () => {
         <div
             style={{
                 display: 'flex',
+                flexDirection: 'column',
                 height: '100vh',
                 width: '100%',
                 background: '#0f0f1a',
                 overflow: 'hidden',
             }}
         >
-            {projectId && (
-                <div
-                    className="animate-slide-in transition-smooth sidebar-container"
-                    style={{
-                        background: 'linear-gradient(180deg, #141422 0%, #0f0f1a 100%)',
-                        padding: '0',
-                        minWidth: '250px',
-                        maxWidth: '280px',
-                        height: '100vh',
-                        overflow: 'hidden',
-                        borderRight: '1px solid rgba(124, 58, 237, 0.15)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                    }}
-                >
-                    {/* Sidebar Header */}
-                    <div style={{
-                        padding: '12px 16px',
-                        borderBottom: '1px solid rgba(124, 58, 237, 0.15)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        background: 'rgba(124, 58, 237, 0.05)',
-                    }}>
-                        <CodeOutlined style={{ color: '#7c3aed', fontSize: 16 }} />
-                        <span style={{
-                            color: '#e2e8f0',
-                            fontSize: 13,
-                            fontWeight: 600,
-                            letterSpacing: '0.5px',
-                        }}>
-                            EXPLORER
-                        </span>
-                    </div>
-                    <div style={{ flex: 1, overflow: 'auto', padding: '8px' }}>
-                        <TreeStructure />
-                    </div>
-                </div>
-            )}
-            <div
-                style={{
-                    flex: 1,
-                    height: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                }}
-            >
-                {/* Top Action Bar */}
+            {/* Top Action Bar - Full Width */}
+            <div style={{
+                height: '48px',
+                minHeight: '48px',
+                background: 'linear-gradient(90deg, #141422 0%, #1a1a2e 100%)',
+                borderBottom: '1px solid rgba(250, 204, 21, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 16px',
+            }}>
                 <div style={{
-                    height: '48px',
-                    background: 'linear-gradient(90deg, #141422 0%, #1a1a2e 100%)',
-                    borderBottom: '1px solid rgba(124, 58, 237, 0.15)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0 16px',
+                    gap: '16px',
                 }}>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                    }}>
-                        {/* Run/Stop Button */}
+                    {/* Logo */}
+                    <div
+                        onClick={() => window.location.href = '/'}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            cursor: 'pointer',
+                            paddingRight: '16px',
+                            borderRight: '1px solid rgba(250, 204, 21, 0.2)',
+                        }}
+                    >
+                        <div style={{
+                            width: '28px',
+                            height: '28px',
+                            borderRadius: '8px',
+                            background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}>
+                            <CodeOutlined style={{ color: '#1a1a2e', fontSize: 16 }} />
+                        </div>
+                        <span style={{
+                            background: 'linear-gradient(135deg, #fbbf24, #f59e0b)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            fontSize: 16,
+                            fontWeight: 700,
+                        }}>
+                            CodeExpo
+                        </span>
+                    </div>
+                    {/* Run/Stop Button */}
                         <Tooltip title={isRunning ? "Stop Server" : "Run Dev Server"}>
                             <Button
                                 type="primary"
@@ -207,15 +196,15 @@ export const ProjectPlayground = () => {
                             padding: '6px 12px',
                             fontFamily: '"Fira Code", "Monaco", monospace',
                             fontSize: '12px',
-                            color: '#10b981',
-                            border: '1px solid rgba(16, 185, 129, 0.2)',
+                            color: '#4ade80',
+                            border: '1px solid rgba(74, 222, 128, 0.2)',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '6px',
                             maxWidth: '400px',
                             overflow: 'hidden',
                         }}>
-                            <span style={{ color: '#64748b' }}>$</span>
+                            <span style={{ color: '#9ca3af' }}>$</span>
                             <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 npm i && {devCommand}
                             </span>
@@ -235,12 +224,13 @@ export const ProjectPlayground = () => {
                                 onClick={() => setLoadBrowser(!loadBrowser)}
                                 style={{
                                     background: loadBrowser
-                                        ? 'linear-gradient(135deg, #7c3aed, #6d28d9)'
+                                        ? 'linear-gradient(135deg, #fbbf24, #f59e0b)'
                                         : 'rgba(255,255,255,0.05)',
-                                    border: loadBrowser ? 'none' : '1px solid rgba(124, 58, 237, 0.3)',
+                                    border: loadBrowser ? 'none' : '1px solid rgba(250, 204, 21, 0.3)',
                                     borderRadius: '8px',
                                     height: '32px',
-                                    color: loadBrowser ? '#fff' : '#a78bfa',
+                                    color: loadBrowser ? '#1a1a2e' : '#fbbf24',
+                                    fontWeight: 600,
                                 }}
                             >
                                 Preview
@@ -248,8 +238,55 @@ export const ProjectPlayground = () => {
                         </Tooltip>
                     </div>
                 </div>
+            </div>
 
-                {/* Main Content Area */}
+            {/* Main Area - Sidebar + Content */}
+            <div style={{
+                flex: 1,
+                display: 'flex',
+                overflow: 'hidden',
+            }}>
+                {/* Sidebar */}
+                {projectId && (
+                    <div
+                        className="animate-slide-in transition-smooth sidebar-container"
+                        style={{
+                            background: 'linear-gradient(180deg, #141422 0%, #0f0f1a 100%)',
+                            padding: '0',
+                            width: '250px',
+                            minWidth: '250px',
+                            overflow: 'hidden',
+                            borderRight: '1px solid rgba(250, 204, 21, 0.15)',
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}
+                    >
+                        {/* Sidebar Header */}
+                        <div style={{
+                            padding: '12px 16px',
+                            borderBottom: '1px solid rgba(250, 204, 21, 0.15)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            background: 'rgba(250, 204, 21, 0.05)',
+                        }}>
+                            <FolderOpenOutlined style={{ color: '#fbbf24', fontSize: 16 }} />
+                            <span style={{
+                                color: '#f3f4f6',
+                                fontSize: 13,
+                                fontWeight: 600,
+                                letterSpacing: '0.5px',
+                            }}>
+                                EXPLORER
+                            </span>
+                        </div>
+                        <div style={{ flex: 1, overflow: 'auto', padding: '8px' }}>
+                            <TreeStructure />
+                        </div>
+                    </div>
+                )}
+
+                {/* Editor + Terminal + Browser */}
                 <div style={{ flex: 1, overflow: 'hidden' }}>
                     <Allotment>
                         {/* Editor + Terminal Panel */}
@@ -270,7 +307,7 @@ export const ProjectPlayground = () => {
                                         <div style={{
                                             height: '100%',
                                             background: '#1e1e2e',
-                                            borderBottom: '1px solid rgba(124, 58, 237, 0.15)',
+                                            borderBottom: '1px solid rgba(250, 204, 21, 0.15)',
                                         }}>
                                             <EditorComponent />
                                         </div>
@@ -288,7 +325,7 @@ export const ProjectPlayground = () => {
                                             <div style={{
                                                 height: '32px',
                                                 background: 'linear-gradient(90deg, #1a1a2e, #141422)',
-                                                borderBottom: '1px solid rgba(124, 58, 237, 0.15)',
+                                                borderBottom: '1px solid rgba(250, 204, 21, 0.15)',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 padding: '0 12px',
@@ -357,14 +394,14 @@ export const ProjectPlayground = () => {
                                         background: 'linear-gradient(135deg, #141422 0%, #1a1a2e 100%)',
                                         display: 'flex',
                                         flexDirection: 'column',
-                                        borderLeft: '1px solid rgba(124, 58, 237, 0.15)',
+                                        borderLeft: '1px solid rgba(250, 204, 21, 0.15)',
                                     }}
                                 >
                                     {/* Browser Header */}
                                     <div style={{
                                         height: '40px',
                                         background: 'linear-gradient(90deg, #1a1a2e, #141422)',
-                                        borderBottom: '1px solid rgba(124, 58, 237, 0.15)',
+                                        borderBottom: '1px solid rgba(250, 204, 21, 0.15)',
                                         display: 'flex',
                                         alignItems: 'center',
                                         padding: '0 12px',
