@@ -208,7 +208,7 @@ export const ProjectPlayground = () => {
                         }}>
                             <span style={{ color: '#9ca3af' }}>$</span>
                             <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                npm i && {devCommand}
+                                {`npm i && ${devCommand}`}
                             </span>
                         </div>
                     </div>
@@ -240,7 +240,6 @@ export const ProjectPlayground = () => {
                         </Tooltip>
                     </div>
                 </div>
-            </div>
 
             {/* Main Area - Sidebar + Content */}
             <div style={{

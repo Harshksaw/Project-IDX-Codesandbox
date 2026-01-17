@@ -48,7 +48,7 @@ function processStreamOutput(stream, ws) {
     let nextDataLength = null; // Stores the length of the next message
     let buffer = Buffer.from("");
 
-    function processStreamData(data) {
+    function processStreamData(data?) {
         // This is a helper function to process incoming data chunks
         if(data) {
             buffer = Buffer.concat([buffer, data]); // Concatenating the incoming data to the buffer

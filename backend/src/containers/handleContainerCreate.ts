@@ -19,7 +19,7 @@ export const listContainer = async () => {
     })
 }
 
-export const handleContainerCreate = async (projectId, terminalSocket, req, tcpSocket, head) => {
+export const handleContainerCreate = async (projectId, terminalSocket, req?, tcpSocket?, head?) => {
     console.log("Project id received for container create", projectId);
     try {
 
