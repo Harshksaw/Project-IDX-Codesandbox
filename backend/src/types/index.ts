@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import type { FrameworkType } from './frameworks';
 
 // API Response types
 export interface ApiResponse<T = any> {
@@ -12,7 +13,15 @@ export interface ApiResponse<T = any> {
 export interface Project {
   id: string;
   name: string;
+  framework: FrameworkType;
+  description?: string;
   createdAt: Date;
+  updatedAt: Date;
+  metadata?: {
+    packageManager?: 'npm' | 'yarn' | 'pnpm' | 'bun';
+    nodeVersion?: string;
+    deploymentTarget?: 'docker' | 'serverless' | 'standalone';
+  };
 }
 
 export interface ProjectTree {
@@ -38,3 +47,14 @@ export interface AuthRequest extends Request {
     email: string;
   };
 }
+
+// Framework request types
+export interface CreateProjectRequest extends Request {
+  body: {
+    name?: string;
+    framework: FrameworkType;
+    description?: string;
+    metadata?: Record<string, any>;
+  };
+}
+
