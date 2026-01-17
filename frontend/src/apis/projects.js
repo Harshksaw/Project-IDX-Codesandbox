@@ -1,8 +1,12 @@
 import axios from '../config/axiosConfig';
 
-export const createProjectApi = async () => {
+export const createProjectApi = async (options = {}) => {
     try {
-        const response = await axios.post('/api/v1/projects');
+        const { framework, name } = options;
+        const response = await axios.post('/api/v1/projects', {
+            framework,
+            name
+        });
         console.log(response.data);
         return response.data;
     } catch(error) {

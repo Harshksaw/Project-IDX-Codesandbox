@@ -36,7 +36,7 @@ export const FRAMEWORK_CONFIGS: Record<FrameworkType, FrameworkConfig> = {
     description: 'Fast frontend framework with React',
     initCommand: 'npm create vite@latest . -- --template react-ts',
     buildCommand: 'npm run build',
-    devCommand: 'npm run dev',
+    devCommand: 'npm run dev -- --host 0.0.0.0',
     packageManager: 'npm',
     entryPoint: 'src/main.tsx',
     supportsDocker: true,
@@ -48,7 +48,7 @@ export const FRAMEWORK_CONFIGS: Record<FrameworkType, FrameworkConfig> = {
     description: 'Fast frontend framework with Vue',
     initCommand: 'npm create vite@latest . -- --template vue-ts',
     buildCommand: 'npm run build',
-    devCommand: 'npm run dev',
+    devCommand: 'npm run dev -- --host 0.0.0.0',
     packageManager: 'npm',
     entryPoint: 'src/main.ts',
     supportsDocker: true
@@ -59,7 +59,7 @@ export const FRAMEWORK_CONFIGS: Record<FrameworkType, FrameworkConfig> = {
     description: 'Fast frontend framework with Svelte',
     initCommand: 'npm create vite@latest . -- --template svelte-ts',
     buildCommand: 'npm run build',
-    devCommand: 'npm run dev',
+    devCommand: 'npm run dev -- --host 0.0.0.0',
     packageManager: 'npm',
     entryPoint: 'src/main.ts',
     supportsDocker: true
