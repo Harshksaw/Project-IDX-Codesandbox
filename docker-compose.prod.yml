@@ -1,0 +1,133 @@
+version: '3.8'
+
+# Production Docker Compose with resource limits and security
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.server
+    container_name: codeexpo-backend
+    ports:
+      - "50002:50002"
+      - "50003:50003"
+    environment:
+      - NODE_ENV=production
+      - PORT=50002
+      - TERMINAL_PORT=50003
+      - HOST_PROJECTS_PATH=${PWD}/projects
+      # Add these for production
+      - MAX_CONTAINERS=20
+      - CONTAINER_TIMEOUT=3600
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./projects:/app/projects
+      - ./logs:/app/logs
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    restart: unless-stopped
+    networks:
+      - codeexpo-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:50002/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - VITE_BACKEND_URL=
+    container_name: codeexpo-frontend
+    ports:
+      - "50001:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    restart: unless-stopped
+    networks:
+      - codeexpo-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional: Redis for session management and caching
+  redis:
+    image: redis:7-alpine
+    container_name: codeexpo-redis
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+    restart: unless-stopped
+    networks:
+      - codeexpo-network
+    command: redis-server --appendonly yes
+    profiles:
+      - with-redis
+
+  # Optional: Watchtower for auto-updates
+  watchtower:
+    image: containrrr/watchtower
+    container_name: codeexpo-watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=86400
+    restart: unless-stopped
+    profiles:
+      - with-watchtower
+
+  # Sandbox base image builder
+  sandbox-builder:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: sandbox:latest
+    profiles:
+      - build-sandbox
+
+networks:
+  codeexpo-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+volumes:
+  redis_data:

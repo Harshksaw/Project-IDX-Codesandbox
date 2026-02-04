@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import type { ServerConfig } from '../types/config';
+import type { ServerConfig } from '../types/config.js';
 
 dotenv.config();
 

@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
-import { pingCheck } from '../../controllers/pingController';
-import projectRouter from './projects';
+import { pingCheck } from '../../controllers/pingController.js';
+import projectRouter from './projects.js';
 
 const router: Router = express.Router();
 

@@ -2,10 +2,10 @@ import uuid4 from 'uuid4';
 import { promises as fs } from 'fs';
 import path from 'path';
 import directoryTree from 'directory-tree';
-import { execPromisified } from '../utils/execUtility';
-import config from '../config/serverConfig';
-import type { ProjectTree, Project } from '../types';
-import { getFrameworkConfig, FrameworkType } from '../config/frameworks';
+import { execPromisified } from '../utils/execUtility.js';
+import config from '../config/serverConfig.js';
+import type { ProjectTree, Project } from '../types/index.js';
+import { getFrameworkConfig, FrameworkType } from '../config/frameworks.js';
 
 export const createProjectService = async (
   framework: FrameworkType = FrameworkType.VITE_REACT,

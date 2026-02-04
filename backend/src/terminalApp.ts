@@ -15,8 +15,10 @@ app.use(express.urlencoded());
 app.use(cors());
 
 
-server.listen(4000, () => {
-    console.log(`Server is running on port ${4000}`);
+const TERMINAL_PORT = parseInt(process.env.TERMINAL_PORT || '50003', 10);
+
+server.listen(TERMINAL_PORT, () => {
+    console.log(`Server is running on port ${TERMINAL_PORT}`);
     console.log(process.cwd())
 });
 

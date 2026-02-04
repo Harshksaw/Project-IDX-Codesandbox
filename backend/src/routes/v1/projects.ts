@@ -1,12 +1,12 @@
 import express, { Router } from 'express';
-import { 
-  createProjectController, 
+import {
+  createProjectController,
   getProjectTree,
   getProjectMetadata,
   listProjects,
   deleteProject,
   getAvailableFrameworksController
-} from '../../controllers/projectController';
+} from '../../controllers/projectController.js';
 
 const router: Router = express.Router();
 

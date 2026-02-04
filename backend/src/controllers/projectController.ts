@@ -1,12 +1,12 @@
-import type { AsyncRoute, ApiResponse, CreateProjectRequest } from '../types';
-import { 
-  createProjectService, 
+import type { AsyncRoute, ApiResponse, CreateProjectRequest } from '../types/index.js';
+import {
+  createProjectService,
   getProjectTreeService,
   getProjectMetadataService,
   listProjectsService,
   deleteProjectService
-} from '../service/projectService';
-import { getAvailableFrameworks, FrameworkType } from '../config/frameworks';
+} from '../service/projectService.js';
+import { getAvailableFrameworks, FrameworkType } from '../config/frameworks.js';
 
 export const createProjectController: AsyncRoute = async (req, res) => {
   try {

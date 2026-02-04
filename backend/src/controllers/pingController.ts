@@ -1,4 +1,4 @@
-import type { AsyncRoute, ApiResponse } from '../types';
+import type { AsyncRoute, ApiResponse } from '../types/index.js';
 
 export const pingCheck: AsyncRoute = async (_req, res) => {
   const response: ApiResponse = {

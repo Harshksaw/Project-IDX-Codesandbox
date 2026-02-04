@@ -1,5 +1,5 @@
 import fs from "fs/promises";
-import { getContainerPort } from "../containers/handleContainerCreate";
+import { getContainerPort } from "../containers/handleContainerCreate.js";
 
 
 export const handleEditorSocketEvents = (socket, editorNamespace) => {
@@ -43,15 +43,16 @@ export const handleEditorSocketEvents = (socket, editorNamespace) => {
 
 
     socket.on("readFile", async ({ pathToFileOrFolder }) => {
+        console.log("readFile event received for:", pathToFileOrFolder);
         try {
             const response = await fs.readFile(pathToFileOrFolder);
-            console.log(response.toString());
+            console.log("File read successfully, length:", response.toString().length);
             socket.emit("readFileSuccess", {
                 value: response.toString(),
                 path: pathToFileOrFolder,
             })
         } catch(error) {
-            console.log("Error reading the file", error);
+            console.log("Error reading the file:", pathToFileOrFolder, error);
             socket.emit("error", {
                 data: "Error reading the file",
             });

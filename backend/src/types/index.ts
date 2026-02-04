@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { FrameworkType } from './frameworks';
+import type { FrameworkType } from './frameworks.js';
 
 // API Response types
 export interface ApiResponse<T = any> {
