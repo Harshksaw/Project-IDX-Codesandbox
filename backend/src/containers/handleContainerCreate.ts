@@ -23,18 +23,25 @@ export const handleContainerCreate = async (projectId, terminalSocket, req?, tcp
     console.log("Project id received for container create", projectId);
     try {
 
-        // Delete any existing container running with same name
-        const existingContainer = await docker.listContainers({
-            name: projectId
+        // Check for existing container with exact name match
+        const existingContainers = await docker.listContainers({
+            all: true, // Show stopped containers too
+            filters: {
+                name: [`^/${projectId}$`] // Exact match filter
+            }
         });
 
+        if (existingContainers.length > 0) {
+            console.log("Container already exists, reusing it:", existingContainers[0].Id);
+            const container = docker.getContainer(existingContainers[0].Id);
 
-        console.log("Existing container", existingContainer);
+            // Check if it's running
+            if (existingContainers[0].State !== 'running') {
+                console.log("Container was stopped, starting it...");
+                await container.start();
+            }
 
-        if(existingContainer.length > 0) {
-            console.log("Container already exists, stopping and removing it");
-            const container = docker.getContainer(existingContainer[0].Id);
-            await container.remove({force: true});
+            return container;
         }
 
         console.log("Creating a new container");
@@ -45,15 +52,15 @@ export const handleContainerCreate = async (projectId, terminalSocket, req?, tcp
                 AttachStdin: true,
                 AttachStdout: true,
                 AttachStderr: true,
-                Cmd: ['/bin/bash'],
+                // Entrypoint in Dockerfile handles switching to sandbox user after fixing permissions
                 name: projectId,
                 Tty: true,
-                User: "sandbox",
+                // Run as root initially so entrypoint can chown, then it drops to sandbox user
                 Volumes: {
                     "/home/sandbox/app": {}
                 },
                 ExposedPorts: {
-                        "5173/tcp": {}
+                    "5173/tcp": {}
                 },
                 Env: ["HOST=0.0.0.0"],
                 HostConfig: {
@@ -69,7 +76,7 @@ export const handleContainerCreate = async (projectId, terminalSocket, req?, tcp
                     },
                 }
             });
-        
+
             console.log("Container created", container.id);
 
             await container.start();
@@ -83,11 +90,9 @@ export const handleContainerCreate = async (projectId, terminalSocket, req?, tcp
         }
 
 
-    } catch(error) {
+    } catch (error) {
         console.log("Error while creating container", error);
     }
-
-
 }
 
 
@@ -96,15 +101,15 @@ export async function getContainerPort(containerName) {
         name: containerName
     });
 
-    if(container.length > 0) {
+    if (container.length > 0) {
         const containerInfo = await docker.getContainer(container[0].Id).inspect();
         console.log("Container info", containerInfo);
         try {
             return containerInfo?.NetworkSettings?.Ports["5173/tcp"][0].HostPort;
-        } catch(error) {
+        } catch (error) {
             console.log("port not present");
             return undefined;
         }
-        
+
     }
 }

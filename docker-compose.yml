@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     build:
@@ -24,22 +22,38 @@ services:
     restart: unless-stopped
     networks:
       - codeexpo-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:50002/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - VITE_BACKEND_URL=
+        - VITE_BACKEND_URL=http://localhost:50002
+        - VITE_TERMINAL_URL=http://localhost:50003
     container_name: codeexpo-frontend
     ports:
-      - "50001:80"
+      - "8080:80"
       # - "443:443"  # Uncomment for HTTPS
     depends_on:
       - backend
     restart: unless-stopped
     networks:
       - codeexpo-network
+    # healthcheck disabled - container was being killed
 
   # Sandbox base image builder (run once to build the sandbox image)
   # Usage: docker-compose --profile build-sandbox build sandbox-builder

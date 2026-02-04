@@ -12,9 +12,11 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Set backend URL for production (empty = use nginx proxy)
+# Set URLs for production (empty = use nginx proxy)
 ARG VITE_BACKEND_URL=""
+ARG VITE_TERMINAL_URL=""
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+ENV VITE_TERMINAL_URL=$VITE_TERMINAL_URL
 
 # Build the app
 RUN npm run build

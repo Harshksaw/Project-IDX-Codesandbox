@@ -10,11 +10,11 @@ const axiosInstance = axios.create({
 
 export default axiosInstance;
 
-// Helper to get WebSocket URL
+// Helper to get WebSocket URL for terminal (port 50003)
 export const getWebSocketURL = (path) => {
-    if (import.meta.env.VITE_BACKEND_URL) {
-        // Development: use backend URL
-        const url = new URL(import.meta.env.VITE_BACKEND_URL);
+    if (import.meta.env.VITE_TERMINAL_URL) {
+        // Development: use terminal WebSocket URL
+        const url = new URL(import.meta.env.VITE_TERMINAL_URL);
         return `ws://${url.host}${path}`;
     }
     // Production: use current host (nginx proxy)
