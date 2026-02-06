@@ -1,16 +1,14 @@
 import express, { Router, Request, Response, NextFunction } from 'express';
 import { getContainerPort } from '../../containers/handleContainerCreate.js';
 import { createProxyMiddleware } from 'http-proxy-middleware';
-import { networkInterfaces } from 'os';
 
 const router: Router = express.Router();
 
 // Determine the host to use for container access
 const getContainerHost = () => {
   // If running in Docker (backend container), need to access host network
-  if (process.env.DOCKER_ENVIRONMENT === 'true' || process.env.NODE_ENV === 'production') {
-    // Try host.docker.internal first (works on Docker Desktop for Mac/Windows)
-    // Fall back to Docker bridge gateway IP for Linux
+  if (process.env.DOCKER_ENVIRONMENT === 'true') {
+    // Use Docker bridge gateway IP for Linux or specified host IP
     return process.env.DOCKER_HOST_IP || 'host.docker.internal';
   }
   // In development on host machine, use localhost

@@ -447,7 +447,7 @@ export const ProjectPlayground = () => {
                                                 fontSize: '12px',
                                                 fontFamily: 'monospace',
                                             }}>
-                                                /preview/{projectIdFromUrl}
+                                                /api/v1/preview/{projectIdFromUrl}
                                             </span>
                                         </div>
                                         <Tooltip title="Reload">
