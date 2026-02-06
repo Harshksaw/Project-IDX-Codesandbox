@@ -5,7 +5,8 @@ import {
   getProjectMetadata,
   listProjects,
   deleteProject,
-  getAvailableFrameworksController
+  getAvailableFrameworksController,
+  getProjectPort
 } from '../../controllers/projectController.js';
 
 const router: Router = express.Router();
@@ -18,6 +19,7 @@ router.post('/', createProjectController);
 router.get('/', listProjects);
 router.get('/:projectId/metadata', getProjectMetadata);
 router.get('/:projectId/tree', getProjectTree);
+router.get('/:projectId/port', getProjectPort);
 router.delete('/:projectId', deleteProject);
 
 export default router;

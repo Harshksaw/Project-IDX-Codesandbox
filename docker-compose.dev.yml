@@ -16,6 +16,8 @@ services:
       - NODE_ENV=development
       - PORT=3000
       - TERMINAL_PORT=4000
+      - DOCKER_ENVIRONMENT=true
+      - DOCKER_HOST_IP=172.17.0.1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./backend:/app
