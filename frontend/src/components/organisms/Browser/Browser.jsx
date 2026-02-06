@@ -1,32 +1,17 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { Input, Row } from "antd";
-import { useEditorSocketStore } from "../../../store/editorSocketStore";
-import { usePortStore } from "../../../store/portStore";
 import { ReloadOutlined } from "@ant-design/icons";
 
 export const Browser = ({ projectId }) => {
 
     const browserRef = useRef(null);
-    const { port } = usePortStore();
 
-    const { editorSocket } = useEditorSocketStore();
-
-    useEffect(() => {
-        if(!port) {
-            editorSocket?.emit("getPort", {
-                containerName: projectId
-            })
-        }
-    }, [port, editorSocket]);
-
-    if(!port) {
-        return <div>Loading....</div>
-    }
+    // Use the preview proxy URL instead of direct localhost port
+    const previewUrl = `/preview/${projectId}/`;
 
     function handleRefresh() {
         if(browserRef.current) {
-            const oldAddr = browserRef.current.src;
-            browserRef.current.src = oldAddr;
+            browserRef.current.src = previewUrl;
         }
     }
 
@@ -36,7 +21,7 @@ export const Browser = ({ projectId }) => {
                 backgroundColor: "#22212b"
             }}
         >
-            <Input 
+            <Input
                 style={{
                     width: "100%",
                     height: "30px",
@@ -45,12 +30,13 @@ export const Browser = ({ projectId }) => {
                     backgroundColor: "#282a35",
                 }}
                 prefix={<ReloadOutlined onClick={handleRefresh} />}
-                defaultValue={`http://localhost:${port}`}
+                value={previewUrl}
+                readOnly
             />
 
-            <iframe 
+            <iframe
                 ref={browserRef}
-                src={`http://localhost:${port}`}
+                src={previewUrl}
                 style={{
                     width: "100%",
                     height: "95vh",

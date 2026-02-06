@@ -93,7 +93,7 @@ export const FRAMEWORK_CONFIGS: Record<FrameworkType, FrameworkConfig> = {
     description: 'React framework with server-side rendering',
     initCommand: 'npx create-next-app@latest . --typescript --tailwind --no-git',
     buildCommand: 'npm run build',
-    devCommand: 'npm run dev',
+    devCommand: 'npm run dev -- -H 0.0.0.0',
     startCommand: 'npm start',
     packageManager: 'npm',
     entryPoint: 'pages/index.tsx',

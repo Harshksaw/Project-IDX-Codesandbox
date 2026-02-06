@@ -51,7 +51,7 @@ services:
         - VITE_TERMINAL_URL=http://localhost:50003
     container_name: codeexpo-frontend
     ports:
-      - "8080:80"
+      - "50001:80"
       # - "443:443"  # Uncomment for HTTPS
     depends_on:
       - backend
