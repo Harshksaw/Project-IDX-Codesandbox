@@ -6,6 +6,7 @@ import { execPromisified } from '../utils/execUtility.js';
 import config from '../config/serverConfig.js';
 import type { ProjectTree, Project } from '../types/index.js';
 import { getFrameworkConfig, FrameworkType } from '../config/frameworks.js';
+import { cleanupContainer } from '../containers/handleContainerCreate.js';
 
 export const createProjectService = async (
   framework: FrameworkType = FrameworkType.VITE_REACT,
@@ -109,12 +110,25 @@ export const listProjectsService = async (): Promise<Project[]> => {
   }
 };
 
-export const deleteProjectService = async (projectId: string): Promise<void> => {
+export const deleteProjectService = async (projectId: string, cleanupContainerFlag = true): Promise<void> => {
   const projectPath = path.resolve('./projects', projectId);
   const projectsDir = path.resolve('./projects');
-  
+
   if (!projectPath.startsWith(projectsDir)) {
     throw new Error('Invalid project path');
+  }
+
+  // Cleanup container first (stop and remove)
+  if (cleanupContainerFlag) {
+    try {
+      const containerCleaned = await cleanupContainer(projectId);
+      if (containerCleaned) {
+        console.log(`Container for project ${projectId} cleaned up`);
+      }
+    } catch (error) {
+      console.error(`Failed to cleanup container for ${projectId}:`, error);
+      // Continue with project deletion even if container cleanup fails
+    }
   }
 
   await fs.rm(projectPath, { recursive: true, force: true });
