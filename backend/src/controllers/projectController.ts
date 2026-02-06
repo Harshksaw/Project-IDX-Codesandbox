@@ -7,6 +7,7 @@ import {
   deleteProjectService
 } from '../service/projectService.js';
 import { getAvailableFrameworks, FrameworkType } from '../config/frameworks.js';
+import { getContainerPort } from '../containers/handleContainerCreate.js';
 
 export const createProjectController: AsyncRoute = async (req, res) => {
   try {
@@ -153,6 +154,42 @@ export const getAvailableFrameworksController: AsyncRoute = async (_req, res) =>
     return res.status(500).json({
       success: false,
       message: 'Failed to fetch frameworks',
+      error: message
+    });
+  }
+};
+
+export const getProjectPort: AsyncRoute = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    if (!projectId || typeof projectId !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid project ID'
+      });
+    }
+
+    const port = await getContainerPort(projectId);
+    
+    if (!port) {
+      return res.status(404).json({
+        success: false,
+        message: 'Container not running or port not available'
+      });
+    }
+
+    const response: ApiResponse = {
+      data: { port },
+      success: true,
+      message: 'Successfully fetched container port'
+    };
+    return res.status(200).json(response);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch container port',
       error: message
     });
   }
