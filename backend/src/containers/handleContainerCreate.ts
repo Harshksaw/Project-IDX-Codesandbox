@@ -9,6 +9,9 @@ const getProjectsPath = () => {
     return process.env.HOST_PROJECTS_PATH || path.resolve(process.cwd(), 'projects');
 };
 
+// Network name for sandbox containers - must match the docker-compose network
+const SANDBOX_NETWORK = process.env.SANDBOX_NETWORK || 'codeexpo-network';
+
 export const listContainer = async () => {
 
     const containers = await docker.listContainers();
@@ -41,6 +44,17 @@ export const handleContainerCreate = async (projectId, terminalSocket, req?, tcp
                 await container.start();
             }
 
+            // Ensure container is on the shared network
+            try {
+                const network = docker.getNetwork(SANDBOX_NETWORK);
+                await network.connect({ Container: existingContainers[0].Id });
+            } catch (err: any) {
+                // Ignore if already connected
+                if (!err.message?.includes('already exists')) {
+                    console.warn("Could not connect container to network:", err.message);
+                }
+            }
+
             return container;
         }
 
@@ -70,10 +84,11 @@ export const handleContainerCreate = async (projectId, terminalSocket, req?, tcp
                     PortBindings: {
                         "5173/tcp": [
                             {
-                                "HostPort": "0" // random port will be assigned by docker
+                                "HostPort": "0" // random port as fallback
                             }
                         ]
                     },
+                    NetworkMode: SANDBOX_NETWORK,
                 }
             });
 

@@ -8,9 +8,6 @@ services:
       - "50002:50002"
       - "50003:50003"
       - "50004:50004"
-    extra_hosts:
-      # Enable host.docker.internal on Linux (required for preview proxy)
-      - "host.docker.internal:host-gateway"
     environment:
       - NODE_ENV=production
       - PORT=50002
@@ -19,6 +16,7 @@ services:
       # HOST_PROJECTS_PATH is the path on the HOST machine where projects are stored
       # This is needed for sibling containers to mount the correct path
       - HOST_PROJECTS_PATH=${PWD}/projects
+      - SANDBOX_NETWORK=codeexpo-network
     volumes:
       # Mount Docker socket for container management (Docker-out-of-Docker)
       - /var/run/docker.sock:/var/run/docker.sock
@@ -46,9 +44,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        - VITE_BACKEND_URL=http://localhost:50002
-        - VITE_TERMINAL_URL=http://localhost:50003
+      # No VITE_BACKEND_URL / VITE_TERMINAL_URL args = frontend uses relative URLs
+      # routed through nginx to the backend services (production mode)
     container_name: codeexpo-frontend
     ports:
       - "50001:80"
@@ -72,4 +69,5 @@ services:
 
 networks:
   codeexpo-network:
+    name: codeexpo-network
     driver: bridge

@@ -1,16 +1,15 @@
 import http from 'http';
-import { getContainerPort } from './containers/handleContainerCreate.js';
 
 /**
  * Preview Proxy Server
  * Routes /preview/:projectId/* requests to the appropriate sandbox container
+ *
+ * Uses Docker network routing: sandbox containers are on the same network
+ * as the backend, so we reach them by container name on port 5173.
  */
 
 const PREVIEW_PORT = parseInt(process.env.PREVIEW_PORT || '50004');
-
-// In Docker, we need to reach the host machine where sandbox containers run
-// host.docker.internal works on Docker Desktop, for Linux we use the gateway IP
-const PROXY_HOST = process.env.DOCKER_HOST_IP || 'host.docker.internal';
+const CONTAINER_PORT = 5173; // Internal port inside sandbox containers
 
 const server = http.createServer(async (req, res) => {
     const url = req.url || '/';
@@ -28,41 +27,24 @@ const server = http.createServer(async (req, res) => {
     const path = match[2] || '/';
 
     try {
-        const port = await getContainerPort(projectId);
-
-        if (!port) {
-            res.writeHead(503, { 'Content-Type': 'text/html' });
-            res.end(`
-                <html>
-                <head><title>Preview Not Available</title></head>
-                <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-                    <h1>Preview Not Available</h1>
-                    <p>The development server is not running yet.</p>
-                    <p>Run <code>npm run dev</code> in the terminal to start it.</p>
-                    <button onclick="location.reload()">Retry</button>
-                </body>
-                </html>
-            `);
-            return;
-        }
-
-        // Proxy the request to the container
+        // Proxy the request to the container via Docker network
+        // Container name = projectId, reachable on the shared network
         const proxyReq = http.request(
             {
-                hostname: PROXY_HOST,
-                port: parseInt(port),
+                hostname: projectId, // Container name as hostname on Docker network
+                port: CONTAINER_PORT,
                 path: path,
                 method: req.method,
                 headers: {
                     ...req.headers,
-                    host: `localhost:${port}`,
+                    host: `localhost:${CONTAINER_PORT}`,
                 },
             },
             (proxyRes) => {
                 const contentType = proxyRes.headers['content-type'] || '';
 
-                // For HTML responses, inject <base> tag to fix relative paths
-                if (contentType.includes('text/html')) {
+                // For HTML responses with 200 status, inject <base> tag to fix relative paths
+                if (contentType.includes('text/html') && proxyRes.statusCode === 200) {
                     let body = '';
                     proxyRes.on('data', chunk => body += chunk);
                     proxyRes.on('end', () => {
@@ -78,13 +60,33 @@ const server = http.createServer(async (req, res) => {
 
                         // Update content-length header
                         const headers = { ...proxyRes.headers };
+                        delete headers['content-length'];
+                        delete headers['Content-Length'];
+                        delete headers['transfer-encoding'];
+                        delete headers['Transfer-Encoding'];
                         headers['content-length'] = Buffer.byteLength(modifiedBody).toString();
 
                         res.writeHead(proxyRes.statusCode || 200, headers);
                         res.end(modifiedBody);
                     });
                 } else {
-                    // For non-HTML, pipe directly
+                    // For non-HTML responses, validate MIME type matches expected file extension
+                    const requestedPath = path.toLowerCase();
+                    const actualContentType = contentType.toLowerCase();
+
+                    // Check for Vite SPA fallback returning HTML for JS/CSS files
+                    const isJsRequest = requestedPath.endsWith('.js') || requestedPath.endsWith('.ts') ||
+                                       requestedPath.endsWith('.tsx') || requestedPath.endsWith('.jsx') ||
+                                       requestedPath.includes('@vite') || requestedPath.includes('@react-refresh');
+                    const isCssRequest = requestedPath.endsWith('.css');
+
+                    if ((isJsRequest || isCssRequest) && actualContentType.includes('text/html')) {
+                        console.error(`MIME mismatch: ${requestedPath} returned ${actualContentType}`);
+                        res.writeHead(404, { 'Content-Type': 'text/plain' });
+                        res.end(`File not found: ${requestedPath}`);
+                        return;
+                    }
+
                     res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
                     proxyRes.pipe(res);
                 }
@@ -96,11 +98,11 @@ const server = http.createServer(async (req, res) => {
             res.writeHead(502, { 'Content-Type': 'text/html' });
             res.end(`
                 <html>
-                <head><title>Preview Error</title></head>
+                <head><title>Preview Not Available</title></head>
                 <body style="font-family: sans-serif; padding: 40px; text-align: center;">
-                    <h1>Preview Error</h1>
-                    <p>Could not connect to the development server.</p>
-                    <p>Make sure your app is running on port 5173.</p>
+                    <h1>Preview Not Available</h1>
+                    <p>The development server is not running yet.</p>
+                    <p>Run <code>npm run dev</code> in the terminal to start it.</p>
                     <button onclick="location.reload()">Retry</button>
                 </body>
                 </html>
@@ -129,22 +131,15 @@ server.on('upgrade', async (req, socket, head) => {
     const path = match[2] || '/';
 
     try {
-        const port = await getContainerPort(projectId);
-
-        if (!port) {
-            socket.destroy();
-            return;
-        }
-
-        // Create connection to target
+        // Create connection to target container via Docker network
         const proxySocket = new (await import('net')).default.Socket();
 
-        proxySocket.connect(parseInt(port), PROXY_HOST, () => {
-            // Reconstruct the HTTP upgrade request with localhost host header
+        proxySocket.connect(CONTAINER_PORT, projectId, () => {
+            // Reconstruct the HTTP upgrade request
             const modifiedHeaders = Object.entries(req.headers)
                 .map(([key, value]) => {
                     if (key.toLowerCase() === 'host') {
-                        return `${key}: localhost:${port}`;
+                        return `${key}: localhost:${CONTAINER_PORT}`;
                     }
                     return `${key}: ${value}`;
                 })
