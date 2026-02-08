@@ -76,7 +76,7 @@ export const handleContainerCreate = async (projectId, terminalSocket, req?, tcp
                 ExposedPorts: {
                     "5173/tcp": {}
                 },
-                Env: ["HOST=0.0.0.0"],
+                Env: ["HOST=0.0.0.0", `PROJECT_ID=${projectId}`],
                 HostConfig: {
                     Binds: [ // mounting the project directory to the container
                         `${getProjectsPath()}/${projectId}:/home/sandbox/app`

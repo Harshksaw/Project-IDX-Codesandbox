@@ -2,10 +2,11 @@ import http from 'http';
 
 /**
  * Preview Proxy Server
- * Routes /preview/:projectId/* requests to the appropriate sandbox container
+ * Routes /preview/:projectId/* requests to the appropriate sandbox container.
  *
- * Uses Docker network routing: sandbox containers are on the same network
- * as the backend, so we reach them by container name on port 5173.
+ * Sandbox containers run Vite with `base: '/preview/:projectId/'`, so the
+ * proxy forwards the full URL path (including the base prefix) and Vite
+ * strips it internally.
  */
 
 const PREVIEW_PORT = parseInt(process.env.PREVIEW_PORT || '50004');
@@ -24,16 +25,15 @@ const server = http.createServer(async (req, res) => {
     }
 
     const projectId = match[1];
-    const path = match[2] || '/';
 
     try {
-        // Proxy the request to the container via Docker network
-        // Container name = projectId, reachable on the shared network
+        // Forward the full URL path to Vite (which has base: '/preview/:projectId/')
+        // Vite's dev server will strip the base prefix internally
         const proxyReq = http.request(
             {
                 hostname: projectId, // Container name as hostname on Docker network
                 port: CONTAINER_PORT,
-                path: path,
+                path: url, // Full path including /preview/:projectId/ prefix
                 method: req.method,
                 headers: {
                     ...req.headers,
@@ -41,55 +41,8 @@ const server = http.createServer(async (req, res) => {
                 },
             },
             (proxyRes) => {
-                const contentType = proxyRes.headers['content-type'] || '';
-
-                // For HTML responses with 200 status, inject <base> tag to fix relative paths
-                if (contentType.includes('text/html') && proxyRes.statusCode === 200) {
-                    let body = '';
-                    proxyRes.on('data', chunk => body += chunk);
-                    proxyRes.on('end', () => {
-                        // Inject base tag after <head> to make relative URLs work
-                        const baseTag = `<base href="/preview/${projectId}/">`;
-                        let modifiedBody = body;
-
-                        if (body.includes('<head>')) {
-                            modifiedBody = body.replace('<head>', `<head>${baseTag}`);
-                        } else if (body.includes('<!DOCTYPE') || body.includes('<html')) {
-                            modifiedBody = baseTag + body;
-                        }
-
-                        // Update content-length header
-                        const headers = { ...proxyRes.headers };
-                        delete headers['content-length'];
-                        delete headers['Content-Length'];
-                        delete headers['transfer-encoding'];
-                        delete headers['Transfer-Encoding'];
-                        headers['content-length'] = Buffer.byteLength(modifiedBody).toString();
-
-                        res.writeHead(proxyRes.statusCode || 200, headers);
-                        res.end(modifiedBody);
-                    });
-                } else {
-                    // For non-HTML responses, validate MIME type matches expected file extension
-                    const requestedPath = path.toLowerCase();
-                    const actualContentType = contentType.toLowerCase();
-
-                    // Check for Vite SPA fallback returning HTML for JS/CSS files
-                    const isJsRequest = requestedPath.endsWith('.js') || requestedPath.endsWith('.ts') ||
-                                       requestedPath.endsWith('.tsx') || requestedPath.endsWith('.jsx') ||
-                                       requestedPath.includes('@vite') || requestedPath.includes('@react-refresh');
-                    const isCssRequest = requestedPath.endsWith('.css');
-
-                    if ((isJsRequest || isCssRequest) && actualContentType.includes('text/html')) {
-                        console.error(`MIME mismatch: ${requestedPath} returned ${actualContentType}`);
-                        res.writeHead(404, { 'Content-Type': 'text/plain' });
-                        res.end(`File not found: ${requestedPath}`);
-                        return;
-                    }
-
-                    res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
-                    proxyRes.pipe(res);
-                }
+                res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
+                proxyRes.pipe(res);
             }
         );
 
@@ -128,14 +81,11 @@ server.on('upgrade', async (req, socket, head) => {
     }
 
     const projectId = match[1];
-    const path = match[2] || '/';
 
     try {
-        // Create connection to target container via Docker network
         const proxySocket = new (await import('net')).default.Socket();
 
         proxySocket.connect(CONTAINER_PORT, projectId, () => {
-            // Reconstruct the HTTP upgrade request
             const modifiedHeaders = Object.entries(req.headers)
                 .map(([key, value]) => {
                     if (key.toLowerCase() === 'host') {
@@ -145,14 +95,14 @@ server.on('upgrade', async (req, socket, head) => {
                 })
                 .join('\r\n');
 
-            const upgradeRequest = `${req.method} ${path} HTTP/1.1\r\n${modifiedHeaders}\r\n\r\n`;
+            // Forward full URL path for WebSocket too
+            const upgradeRequest = `${req.method} ${url} HTTP/1.1\r\n${modifiedHeaders}\r\n\r\n`;
 
             proxySocket.write(upgradeRequest);
             if (head.length > 0) {
                 proxySocket.write(head);
             }
 
-            // Pipe bidirectionally
             socket.pipe(proxySocket);
             proxySocket.pipe(socket);
         });
